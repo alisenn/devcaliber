@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="28" role="img" aria-label="Seniority: L3 • Senior">
+  <title>Seniority: L3 • Senior</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r">
+    <rect width="220" height="28" rx="6" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="80" height="28" fill="#1e293b"/>
+    <rect x="80" width="140" height="28" fill="#0284c7"/>
+    <rect width="220" height="28" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,sans-serif" text-rendering="geometricPrecision" font-size="12">
+    <text aria-hidden="true" x="40" y="19" fill="#010101" fill-opacity=".3">Seniority</text>
+    <text x="40" y="18" fill="#fff" font-weight="600">Seniority</text>
+    <text aria-hidden="true" x="150" y="19" fill="#010101" fill-opacity=".3">L3 • Senior</text>
+    <text x="150" y="18" fill="#fff" font-weight="bold">L3 • Senior</text>
+  </g>
+</svg>
