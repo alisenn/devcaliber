@@ -161,6 +161,45 @@ QUESTIONS: List[Question] = [
             ),
         ],
     ),
+    Question(
+        id="craft_03",
+        dimension=DimensionId.CRAFT,
+        title="Zero-Downtime Migrations & High-Risk Breaking Changes",
+        scenario="You need to alter a database schema with 50 million rows and change a core entity used across 4 internal services without any maintenance downtime.",
+        is_quick=False,
+        options=[
+            QuestionOption(
+                id="c3_a",
+                text="I submit an ALTER TABLE script to the DBA team and ask them to run it during off-peak hours.",
+                score=1.0,
+                level_indicator=SeniorityLevel.L1,
+            ),
+            QuestionOption(
+                id="c3_b",
+                text="I test the migration on a staging replica to measure execution time and check for lock timeouts.",
+                score=2.0,
+                level_indicator=SeniorityLevel.L2,
+            ),
+            QuestionOption(
+                id="c3_c",
+                text="I execute an Expand-and-Contract (Parallel Run) migration pattern: add new column, dual-write in application layer, backfill asynchronously in batches, and cleanly deprecate old schema.",
+                score=3.6,
+                level_indicator=SeniorityLevel.L3,
+            ),
+            QuestionOption(
+                id="c3_d",
+                text="I design a distributed event-driven synchronization or CDC (Change Data Capture) pipeline with contract testing (Pact) across downstream teams to eliminate coordination bottlenecks.",
+                score=4.6,
+                level_indicator=SeniorityLevel.L4,
+            ),
+            QuestionOption(
+                id="c3_e",
+                text="I establish enterprise-wide distributed data governance, zero-downtime database tooling (e.g. Gh-ost/Vitess patterns), and fault-isolated tenancy models across product lines.",
+                score=5.0,
+                level_indicator=SeniorityLevel.L5,
+            ),
+        ],
+    ),
     # --- DIMENSION: RELIABILITY & OWNERSHIP ---
     Question(
         id="own_01",
@@ -235,6 +274,45 @@ QUESTIONS: List[Question] = [
             QuestionOption(
                 id="o2_e",
                 text="I champion automated self-healing systems, zero-trust telemetry infrastructure, and organization-wide resilience engineering principles.",
+                score=5.0,
+                level_indicator=SeniorityLevel.L5,
+            ),
+        ],
+    ),
+    Question(
+        id="own_03",
+        dimension=DimensionId.OWNERSHIP,
+        title="Alert Fatigue & On-Call Engineering Health",
+        scenario="Your team receives 50+ PagerDuty alerts per week, most of which are non-actionable or resolve themselves. Engineers are exhausted. What do you do?",
+        is_quick=False,
+        options=[
+            QuestionOption(
+                id="o3_a",
+                text="I snooze or silence the alerts during my shifts and resolve them whenever they pop up.",
+                score=1.0,
+                level_indicator=SeniorityLevel.L1,
+            ),
+            QuestionOption(
+                id="o3_b",
+                text="I adjust threshold limits on the noisy alerts so they trigger less frequently.",
+                score=2.0,
+                level_indicator=SeniorityLevel.L2,
+            ),
+            QuestionOption(
+                id="o3_c",
+                text="I audit alert history, delete all non-actionable alerts, convert informational alerts into dashboards/daily digests, and attach runbooks to all surviving pager alerts.",
+                score=3.7,
+                level_indicator=SeniorityLevel.L3,
+            ),
+            QuestionOption(
+                id="o3_d",
+                text="I calculate on-call operational load (toil vs feature engineering), institute error budgets, and mandate feature freeze when SLO burn rate exceeds healthy limits.",
+                score=4.6,
+                level_indicator=SeniorityLevel.L4,
+            ),
+            QuestionOption(
+                id="o3_e",
+                text="I overhaul engineering on-call culture company-wide: align compensation/incentives with operational excellence, automate self-healing infrastructure, and eliminate systemic toil.",
                 score=5.0,
                 level_indicator=SeniorityLevel.L5,
             ),
@@ -319,6 +397,45 @@ QUESTIONS: List[Question] = [
             ),
         ],
     ),
+    Question(
+        id="imp_03",
+        dimension=DimensionId.IMPACT,
+        title="Technical Spikes & Feasibility vs Hard Deadlines",
+        scenario="Leadership wants to promise a prospective Fortune 500 client an enterprise feature in 6 weeks that normally takes 6 months of engineering. How do you handle it?",
+        is_quick=False,
+        options=[
+            QuestionOption(
+                id="i3_a",
+                text="I commit to working overtime and weekends with the team to write as much code as possible.",
+                score=1.0,
+                level_indicator=SeniorityLevel.L1,
+            ),
+            QuestionOption(
+                id="i3_b",
+                text="I tell my manager it's impossible and quote the standard 6-month estimate.",
+                score=2.0,
+                level_indicator=SeniorityLevel.L2,
+            ),
+            QuestionOption(
+                id="i3_c",
+                text="I run a 2-day technical spike, identify the client's non-negotiable core workflow, strip out all non-essential requirements, and propose a viable Phase 1 pilot within 6 weeks.",
+                score=3.6,
+                level_indicator=SeniorityLevel.L3,
+            ),
+            QuestionOption(
+                id="i3_d",
+                text="I negotiate directly with Sales & Solution Engineering: leverage existing partner integrations or low-code extensions to close the deal without derailing core product roadmap.",
+                score=4.6,
+                level_indicator=SeniorityLevel.L4,
+            ),
+            QuestionOption(
+                id="i3_e",
+                text="I evaluate the macro enterprise strategy: determine if custom enterprise contracts justify pivoting company platform roadmap or if the opportunity cost hurts core business valuation.",
+                score=5.0,
+                level_indicator=SeniorityLevel.L5,
+            ),
+        ],
+    ),
     # --- DIMENSION: LEADERSHIP & INFLUENCE ---
     Question(
         id="lead_01",
@@ -398,6 +515,45 @@ QUESTIONS: List[Question] = [
             ),
         ],
     ),
+    Question(
+        id="lead_03",
+        dimension=DimensionId.LEADERSHIP,
+        title="Code Review Culture & Uplifting Peers",
+        scenario="A talented engineer repeatedly submits 1,500-line PRs with no tests and gets defensive when teammates leave comments. How do you handle this?",
+        is_quick=False,
+        options=[
+            QuestionOption(
+                id="l3_a",
+                text="I approve the PR without reading to avoid interpersonal conflict.",
+                score=1.0,
+                level_indicator=SeniorityLevel.L1,
+            ),
+            QuestionOption(
+                id="l3_b",
+                text="I leave rigorous inline comments pointing out every flaw and request changes until it's fixed.",
+                score=2.0,
+                level_indicator=SeniorityLevel.L2,
+            ),
+            QuestionOption(
+                id="l3_c",
+                text="I have a private 1-on-1 coffee chat, understand their workflow bottlenecks, demonstrate stacked PR / atomic commit workflows, and establish team PR size guidelines (<400 lines).",
+                score=3.7,
+                level_indicator=SeniorityLevel.L3,
+            ),
+            QuestionOption(
+                id="l3_d",
+                text="I introduce automated linters, semantic PR checks, and PR size warnings in CI, removing personal bias from reviews while mentoring senior peers in constructive feedback techniques.",
+                score=4.6,
+                level_indicator=SeniorityLevel.L4,
+            ),
+            QuestionOption(
+                id="l3_e",
+                text="I cultivate a psychologically safe, high-trust engineering culture org-wide where feedback is sought after, continuous learning is rewarded, and high engineering standards are embraced.",
+                score=5.0,
+                level_indicator=SeniorityLevel.L5,
+            ),
+        ],
+    ),
     # --- DIMENSION: AUTONOMY & AMBIGUITY ---
     Question(
         id="auto_01",
@@ -472,6 +628,45 @@ QUESTIONS: List[Question] = [
             QuestionOption(
                 id="a2_e",
                 text="I identify new product opportunities through technology innovation, assemble strategic teams, and lead high-risk, high-reward ventures that redefine company capabilities.",
+                score=5.0,
+                level_indicator=SeniorityLevel.L5,
+            ),
+        ],
+    ),
+    Question(
+        id="auto_03",
+        dimension=DimensionId.AUTONOMY,
+        title="Cross-Team Friction & Breaking Architectural Blockers",
+        scenario="Your team's highest priority initiative is completely blocked because another platform team has delayed building a required API for 2 consecutive quarters.",
+        is_quick=False,
+        options=[
+            QuestionOption(
+                id="a3_a",
+                text="I put my ticket in 'Blocked' status and wait until the other team finishes.",
+                score=1.0,
+                level_indicator=SeniorityLevel.L1,
+            ),
+            QuestionOption(
+                id="a3_b",
+                text="I ping the other team in Slack every few days asking for updates on their delivery date.",
+                score=2.0,
+                level_indicator=SeniorityLevel.L2,
+            ),
+            QuestionOption(
+                id="a3_c",
+                text="I propose an internal open-source model: I draft the API contract, offer to write the PR directly into their repository, and only request their code review and deployment.",
+                score=3.8,
+                level_indicator=SeniorityLevel.L3,
+            ),
+            QuestionOption(
+                id="a3_d",
+                text="I bring both engineering managers together, demonstrate the company revenue impact of the blockage, realign quarterly roadmap priorities, or architect a temporary decoupling adapter.",
+                score=4.7,
+                level_indicator=SeniorityLevel.L4,
+            ),
+            QuestionOption(
+                id="a3_e",
+                text="I identify the systemic organizational dysfunction (silos, conflicting incentives, misaligned OKRs), partner with VPs of Engineering to redesign team topologies and service boundaries.",
                 score=5.0,
                 level_indicator=SeniorityLevel.L5,
             ),

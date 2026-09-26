@@ -27,7 +27,7 @@
             <div class="flex items-center gap-3">
                 <span class="text-2xl">🧭</span>
                 <span class="font-extrabold text-xl tracking-tight gradient-text">LevelCraft</span>
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">v1.0.0</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">v1.1.0</span>
             </div>
             <div class="flex items-center gap-4">
                 <a href="https://github.com/alisenn/levelcraft" target="_blank" class="flex items-center gap-2 text-xs font-medium text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-700/80 px-3.5 py-1.5 rounded-lg transition-all shadow-sm">
@@ -51,10 +51,10 @@
                 Measure Your True <br><span class="gradient-text">Engineering Seniority</span>
             </h1>
             <p class="mt-4 text-base md:text-lg text-slate-400 max-w-2xl mx-auto">
-                No leetcode trivia. Benchmark yourself against real-world engineering scenarios across 5 pillars (Craft, Reliability, Impact, Leadership, Autonomy).
+                No leetcode trivia. Benchmark yourself against real-world production scenarios across 5 pillars (Craft, Reliability, Impact, Leadership, Autonomy).
             </p>
 
-            <div class="mt-10 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 md:p-8 max-w-lg mx-auto text-left shadow-2xl">
+            <div class="mt-10 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 md:p-8 max-w-xl mx-auto text-left shadow-2xl">
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Your Name or GitHub Handle</label>
@@ -70,13 +70,32 @@
                             <option value="tech_lead">Tech Lead / Management Track</option>
                         </select>
                     </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Evaluation Depth</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="border border-sky-500/60 bg-sky-950/20 rounded-xl p-3 cursor-pointer flex flex-col items-start gap-1">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="evalMode" value="deep" checked class="text-sky-500 focus:ring-0">
+                                    <span class="text-xs font-bold text-white">🔬 Deep Diagnostic</span>
+                                </div>
+                                <span class="text-[11px] text-slate-400 pl-5">15 Nuanced Scenarios (3 per pillar)</span>
+                            </label>
+                            <label class="border border-slate-800 bg-slate-950/60 rounded-xl p-3 cursor-pointer flex flex-col items-start gap-1">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="evalMode" value="quick" class="text-sky-500 focus:ring-0">
+                                    <span class="text-xs font-bold text-white">⚡ Quick Pulse</span>
+                                </div>
+                                <span class="text-[11px] text-slate-400 pl-5">5 Rapid Scenarios (~3 mins)</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 <button onclick="startAssessment()" class="mt-6 w-full bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-500 hover:from-sky-400 hover:to-purple-400 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-sky-500/25 flex items-center justify-center gap-2">
-                    <span>Start 5-Minute Assessment</span>
+                    <span>Start Engineering Assessment</span>
                     <span>→</span>
                 </button>
-                <p class="text-center text-xs text-slate-500 mt-3">Free & open source • Zero tracking • Client-side computation</p>
+                <p class="text-center text-xs text-slate-500 mt-3">Free & open source • Zero tracking • 100% Client-side computation</p>
             </div>
         </div>
 
@@ -88,13 +107,13 @@
                     <span id="qDimName" class="text-xs font-bold uppercase tracking-wider text-sky-400">Craft & Architecture</span>
                 </div>
                 <div class="text-xs font-semibold text-slate-400">
-                    Question <span id="qCurrent">1</span> of <span id="qTotal">5</span>
+                    Scenario <span id="qCurrent">1</span> of <span id="qTotal">15</span>
                 </div>
             </div>
 
             <!-- Progress bar -->
             <div class="w-full bg-slate-800 rounded-full h-1.5 mb-8 overflow-hidden">
-                <div id="progressBar" class="bg-gradient-to-r from-sky-400 to-indigo-500 h-1.5 transition-all duration-300" style="width: 20%"></div>
+                <div id="progressBar" class="bg-gradient-to-r from-sky-400 to-indigo-500 h-1.5 transition-all duration-300" style="width: 6.6%"></div>
             </div>
 
             <!-- Scenario Card -->
@@ -190,79 +209,259 @@
     </main>
 
     <script>
-        const QUESTIONS = [
+        const ALL_QUESTIONS = [
+            // --- CRAFT & ARCHITECTURE ---
             {
-                id: "craft",
-                dimension: "Craft & Architecture",
+                id: "craft_01",
+                dim: "craft",
+                dimName: "Craft & Architecture",
                 icon: "⚡",
-                title: "Technical Debt & System Architecture",
+                isQuick: true,
+                title: "Technical Debt & Refactoring Legacy Code",
                 scenario: "You inherit a critical legacy service that is becoming difficult to maintain and has low test coverage. How do you approach it?",
                 options: [
-                    { score: 1.0, text: "I work only on assigned tickets within the service, trying not to touch outside code." },
-                    { score: 2.0, text: "I refactor local functions and add unit tests whenever I touch that part ('Boy Scout rule')." },
-                    { score: 3.5, text: "I draft a technical RFC defining strangler fig patterns, balance trade-offs with product, and lead migration." },
-                    { score: 4.5, text: "I establish org-wide standards for deprecation, decouple systemic domain dependencies across teams." },
-                    { score: 5.0, text: "I evaluate whether our core technology paradigm still serves our 5-year business strategy." }
+                    { score: 1.0, text: "I work only on assigned tickets within the service, trying not to touch code outside my immediate assignment." },
+                    { score: 2.0, text: "I refactor local functions and add unit tests whenever I touch that part of the codebase ('Boy Scout rule')." },
+                    { score: 3.5, text: "I draft a technical RFC defining strangler fig or modular extraction patterns, balance trade-offs with product, and lead the migration." },
+                    { score: 4.5, text: "I establish org-wide standards for deprecation, decouple systemic domain dependencies across teams, and define architectural boundaries." },
+                    { score: 5.0, text: "I evaluate whether our core technology paradigm still serves our 5-year business strategy, deciding between paradigm shifts or new platform foundations." }
                 ]
             },
             {
-                id: "ownership",
-                dimension: "Reliability & Ownership",
+                id: "craft_02",
+                dim: "craft",
+                dimName: "Craft & Architecture",
+                icon: "⚡",
+                isQuick: false,
+                title: "System Design & 10x Scalability Planning",
+                scenario: "Your system is expected to experience a 10x traffic spike over the next two quarters. What is your reaction?",
+                options: [
+                    { score: 1.0, text: "I wait for tasks to be assigned to me by the tech lead and scale server instance counts as instructed." },
+                    { score: 2.0, text: "I run profiling on hot code paths and optimize database queries / caching layers for the endpoints I own." },
+                    { score: 3.5, text: "I conduct load tests, identify bottlenecks (DB connections, state contention), and redesign architecture (queues, partitioning, backpressure)." },
+                    { score: 4.5, text: "I design horizontal cross-cutting scaling strategies (distributed rate limiting, multi-region failover, caching topologies) with automated degradation." },
+                    { score: 5.0, text: "I evaluate foundational infrastructure limits, negotiate budget tradeoffs with executives, and pioneer resilient distributed systems architecture org-wide." }
+                ]
+            },
+            {
+                id: "craft_03",
+                dim: "craft",
+                dimName: "Craft & Architecture",
+                icon: "⚡",
+                isQuick: false,
+                title: "Zero-Downtime Data Migration & Breaking Changes",
+                scenario: "You need to alter a database schema with 50 million rows and change a core entity used across 4 internal services without any maintenance downtime.",
+                options: [
+                    { score: 1.0, text: "I submit an ALTER TABLE script to the DBA team and ask them to run it during off-peak hours." },
+                    { score: 2.0, text: "I test the migration on a staging replica to measure execution time and check for lock timeouts." },
+                    { score: 3.6, text: "I execute an Expand-and-Contract (Parallel Run) migration pattern: add new column, dual-write in app layer, backfill asynchronously, and deprecate cleanly." },
+                    { score: 4.6, text: "I design a distributed event-driven synchronization or CDC (Change Data Capture) pipeline with contract testing (Pact) across downstream teams." },
+                    { score: 5.0, text: "I establish enterprise-wide distributed data governance, zero-downtime database tooling (e.g. Gh-ost/Vitess patterns), and fault-isolated tenancy models." }
+                ]
+            },
+
+            // --- RELIABILITY & OWNERSHIP ---
+            {
+                id: "own_01",
+                dim: "ownership",
+                dimName: "Reliability & Ownership",
                 icon: "🛡️",
+                isQuick: true,
                 title: "Production Outage & Incident Response",
                 scenario: "A critical production incident occurs during peak hours affecting 20% of users. What role do you naturally play?",
                 options: [
-                    { score: 1.0, text: "I follow along in the incident channel and observe senior colleagues troubleshoot." },
-                    { score: 2.2, text: "I check error logs/APM for my feature, pinpoint recent commits, and prepare a rollback or hotfix." },
-                    { score: 3.7, text: "I act as Incident Commander, mitigate impact first, coordinate stakeholders, and facilitate a blameless postmortem with preventative SLOs." },
-                    { score: 4.6, text: "I analyze systemic vulnerabilities across incident trends and redesign observability pipelines so this failure class is impossible." },
-                    { score: 5.0, text: "I define enterprise reliability standards and manage executive communications during catastrophic risks." }
+                    { score: 1.0, text: "I follow along in the incident channel, observe senior colleagues, and test proposed fixes in lower environments if asked." },
+                    { score: 2.2, text: "I check error logs and APM dashboards for my feature, pinpoint recent commits, and prepare a rollback or hotfix if it's my area." },
+                    { score: 3.7, text: "I act as Incident Commander or primary responder, mitigate impact first (circuit breaker / rollback), coordinate stakeholders, and facilitate a blameless postmortem." },
+                    { score: 4.6, text: "I analyze systemic vulnerabilities across incident trends, implement chaos engineering practices, and redesign observability pipelines so this failure class is impossible." },
+                    { score: 5.0, text: "I define enterprise reliability standards, manage executive communications during catastrophic risks, and reshape company-wide operational accountability." }
                 ]
             },
             {
-                id: "impact",
-                dimension: "Business & Product Impact",
+                id: "own_02",
+                dim: "ownership",
+                dimName: "Reliability & Ownership",
+                icon: "🛡️",
+                isQuick: false,
+                title: "Observability & Production Readiness",
+                scenario: "How do you ensure a new critical service is truly ready for production?",
+                options: [
+                    { score: 1.0, text: "If it compiles, passes unit tests locally, and works in staging, I consider it ready for production." },
+                    { score: 2.0, text: "I add structured logging, configure basic health check endpoints, and set up alerts for HTTP 500 spikes." },
+                    { score: 3.5, text: "I implement golden signals (latency, traffic, errors, saturation), create canary rollout strategies, runbooks, and defined SLOs with actionable alerts." },
+                    { score: 4.5, text: "I enforce automated production readiness checklists via CI/CD, distributed tracing across service boundaries, and graceful degradation fallback plans." },
+                    { score: 5.0, text: "I champion automated self-healing systems, zero-trust telemetry infrastructure, and organization-wide resilience engineering principles." }
+                ]
+            },
+            {
+                id: "own_03",
+                dim: "ownership",
+                dimName: "Reliability & Ownership",
+                icon: "🛡️",
+                isQuick: false,
+                title: "Alert Fatigue & On-Call Engineering Health",
+                scenario: "Your team receives 50+ PagerDuty alerts per week, most of which are non-actionable or resolve themselves. Engineers are exhausted. What do you do?",
+                options: [
+                    { score: 1.0, text: "I snooze or silence the alerts during my shifts and resolve them whenever they pop up." },
+                    { score: 2.0, text: "I adjust threshold limits on the noisy alerts so they trigger less frequently." },
+                    { score: 3.7, text: "I audit alert history, delete all non-actionable alerts, convert informational alerts into dashboards/digests, and attach runbooks to all surviving pager alerts." },
+                    { score: 4.6, text: "I calculate on-call operational load (toil vs feature engineering), institute error budgets, and mandate feature freeze when SLO burn rate exceeds healthy limits." },
+                    { score: 5.0, text: "I overhaul engineering on-call culture company-wide: align compensation/incentives with operational excellence, automate self-healing infrastructure, and eliminate systemic toil." }
+                ]
+            },
+
+            // --- BUSINESS & PRODUCT IMPACT ---
+            {
+                id: "imp_01",
+                dim: "impact",
+                dimName: "Business & Product Impact",
                 icon: "🎯",
+                isQuick: true,
                 title: "Prioritization & Product Trade-offs",
                 scenario: "A product manager requests a high-profile feature with a tight deadline, but the engineering design requires shortcuts that incur tech debt. What do you do?",
                 options: [
-                    { score: 1.0, text: "I write the code as quickly as possible to meet the PM's deadline." },
-                    { score: 2.0, text: "I alert my tech lead about the deadline risk and ask which parts can be simplified." },
-                    { score: 3.6, text: "I negotiate a phased MVP delivery: identify the 20% effort delivering 80% user value, document tech debt, and schedule remediation." },
-                    { score: 4.6, text: "I partner with product leadership to evaluate the business thesis, explore alternative architectures, and prevent wasted engineering quarters." },
-                    { score: 5.0, text: "I reframe the strategic market opportunity, aligning technical investments with multi-year company revenues." }
+                    { score: 1.0, text: "I write the code as quickly as possible according to the PM's specification to meet the deadline." },
+                    { score: 2.0, text: "I alert my tech lead about the deadline risk and ask for advice on which parts can be simplified." },
+                    { score: 3.6, text: "I negotiate a phased MVP delivery: identify the 20% effort delivering 80% user value, explicitly document acceptable tech debt, and schedule remediation." },
+                    { score: 4.6, text: "I partner with product leadership to evaluate the business thesis, explore alternative architectures (like leverage existing APIs/platforms), and prevent wasted engineering quarters." },
+                    { score: 5.0, text: "I reframe the strategic market opportunity, aligning technical investments with multi-year company revenues or competitive market disruption." }
                 ]
             },
             {
-                id: "leadership",
-                dimension: "Leadership & Influence",
+                id: "imp_02",
+                dim: "impact",
+                dimName: "Business & Product Impact",
+                icon: "🎯",
+                isQuick: false,
+                title: "Metric-Driven Engineering & Post-Ship ROI",
+                scenario: "How do you measure the success of an engineering project after shipping?",
+                options: [
+                    { score: 1.0, text: "By having zero immediate crashes and closing all Jira sprint tasks." },
+                    { score: 2.0, text: "By verifying feature adoption in analytics dashboards and monitoring error rates for 48 hours." },
+                    { score: 3.5, text: "By tracking key business and technical KPIs (conversion rates, latency percentiles, cost per query) and running A/B testing experiments." },
+                    { score: 4.5, text: "By establishing experimentation frameworks, measuring long-term user retention impacts, and computing engineering return on investment (ROI)." },
+                    { score: 5.0, text: "By measuring macro business outcomes: customer lifetime value, market share acquisition, and sustainable cost structure transformations." }
+                ]
+            },
+            {
+                id: "imp_03",
+                dim: "impact",
+                dimName: "Business & Product Impact",
+                icon: "🎯",
+                isQuick: false,
+                title: "Technical Spikes vs Hard Customer Deadlines",
+                scenario: "Leadership wants to promise a prospective Fortune 500 client an enterprise feature in 6 weeks that normally takes 6 months of engineering. How do you handle it?",
+                options: [
+                    { score: 1.0, text: "I commit to working overtime and weekends with the team to write as much code as possible." },
+                    { score: 2.0, text: "I tell my manager it's impossible and quote the standard 6-month estimate." },
+                    { score: 3.6, text: "I run a 2-day technical spike, identify the client's non-negotiable core workflow, strip out all non-essential requirements, and propose a viable Phase 1 pilot within 6 weeks." },
+                    { score: 4.6, text: "I negotiate directly with Sales & Solution Engineering: leverage existing partner integrations or low-code extensions to close the deal without derailing core roadmap." },
+                    { score: 5.0, text: "I evaluate the macro enterprise strategy: determine if custom enterprise contracts justify pivoting company platform roadmap or if opportunity cost hurts core business valuation." }
+                ]
+            },
+
+            // --- LEADERSHIP & INFLUENCE ---
+            {
+                id: "lead_01",
+                dim: "leadership",
+                dimName: "Leadership & Influence",
                 icon: "🌟",
+                isQuick: true,
                 title: "Technical Disagreements & Consensus Building",
                 scenario: "Two senior engineers strongly disagree on which database/framework to adopt for a new initiative. How do you resolve it?",
                 options: [
                     { score: 1.0, text: "I stay out of the dispute and wait for someone in charge to pick a decision." },
-                    { score: 2.0, text: "I vote for the technology I personally feel more comfortable with." },
-                    { score: 3.7, text: "I formulate an objective decision matrix (RFC) comparing cost, developer ergonomics, ecosystem maturity, and prototype benchmarks to reach consensus." },
-                    { score: 4.6, text: "I de-escalate ideological debates into Type 1 vs Type 2 decisions, build cross-departmental alignment, and foster a 'disagree and commit' culture." },
-                    { score: 5.0, text: "I shape the organization's overarching technical values and establish engineering governance models." }
+                    { score: 2.0, text: "I vote for the technology I personally feel more comfortable with or have used before." },
+                    { score: 3.7, text: "I formulate an objective decision matrix (RACI/RFC) comparing operational cost, developer ergonomics, ecosystem maturity, and benchmark prototypes to reach consensus." },
+                    { score: 4.6, text: "I de-escalate ideological debates into reversible vs irreversible decisions ('Type 1 vs Type 2'), build cross-departmental alignment, and foster a 'disagree and commit' culture." },
+                    { score: 5.0, text: "I shape the organization's overarching technical values, establish engineering governance models, and coach senior leaders on strategic alignment." }
                 ]
             },
             {
-                id: "autonomy",
-                dimension: "Autonomy & Ambiguity",
+                id: "lead_02",
+                dim: "leadership",
+                dimName: "Leadership & Influence",
+                icon: "🌟",
+                isQuick: false,
+                title: "Mentorship & Force Multiplication",
+                scenario: "How do you approach team knowledge sharing and mentoring?",
+                options: [
+                    { score: 1.0, text: "I focus on my own learning and ask questions when I get stuck." },
+                    { score: 2.0, text: "I answer questions in Slack and give helpful suggestions on pull requests when reviewing peer code." },
+                    { score: 3.5, text: "I actively mentor junior/mid engineers 1-on-1, organize internal tech talks, and write comprehensive onboarding documentation." },
+                    { score: 4.5, text: "I design career development ladders, run company-wide technical guilds, and coach future tech leads and staff engineers." },
+                    { score: 5.0, text: "I define engineering talent strategy, cultivate an open-source engineering brand for hiring, and inspire the industry through publications and keynotes." }
+                ]
+            },
+            {
+                id: "lead_03",
+                dim: "leadership",
+                dimName: "Leadership & Influence",
+                icon: "🌟",
+                isQuick: false,
+                title: "Code Review Culture & Uplifting Peers",
+                scenario: "A talented engineer repeatedly submits 1,500-line PRs with no tests and gets defensive when teammates leave comments. How do you handle this?",
+                options: [
+                    { score: 1.0, text: "I approve the PR without reading to avoid interpersonal conflict." },
+                    { score: 2.0, text: "I leave rigorous inline comments pointing out every flaw and request changes until it's fixed." },
+                    { score: 3.7, text: "I have a private 1-on-1 coffee chat, understand their workflow bottlenecks, demonstrate stacked PR workflows, and establish team PR size guidelines (<400 lines)." },
+                    { score: 4.6, text: "I introduce automated linters, semantic PR checks, and PR size warnings in CI, removing personal bias from reviews while mentoring senior peers in constructive feedback." },
+                    { score: 5.0, text: "I cultivate a psychologically safe, high-trust engineering culture org-wide where feedback is sought after, continuous learning is rewarded, and high engineering standards are embraced." }
+                ]
+            },
+
+            // --- AUTONOMY & AMBIGUITY ---
+            {
+                id: "auto_01",
+                dim: "autonomy",
+                dimName: "Autonomy & Ambiguity",
                 icon: "🚀",
+                isQuick: true,
                 title: "Navigating Ambiguous Goals",
                 scenario: "You receive a high-level goal: 'Improve developer productivity and build speed by next quarter.' There is no specification. What is your first move?",
                 options: [
                     { score: 1.0, text: "I ask management to provide specific tasks and acceptance criteria before starting work." },
-                    { score: 2.0, text: "I look for obvious low-hanging fruit (like deleting unused tests) and ask if that helps." },
-                    { score: 3.6, text: "I instrument telemetry on CI/CD pipelines, survey developers, define a quantitative baseline (P90 build time), and deliver iterative fixes." },
-                    { score: 4.6, text: "I diagnose systemic bottlenecks (remote caching, flaky test isolation), form a virtual task force, and transform team developer velocity." },
-                    { score: 5.0, text: "I redefine the organizational engineering workflow: evaluate cloud dev environments, build vs buy tooling investments, and align with multi-year headcount growth." }
+                    { score: 2.0, text: "I look for obvious low-hanging fruit (like deleting unused tests or updating node/python versions) and ask if that helps." },
+                    { score: 3.6, text: "I instrument telemetry on CI/CD pipelines, survey developers to find top friction points, define a quantitative baseline (P90 build time), and deliver iterative fixes." },
+                    { score: 4.6, text: "I diagnose systemic bottlenecks (remote caching, monorepo tooling, flaky test isolation, local dev environments), form a virtual task force, and transform team developer velocity." },
+                    { score: 5.0, text: "I redefine the organizational engineering workflow: evaluate cloud dev environments, build vs buy tooling investments, and align engineering tooling with multi-year headcount growth." }
+                ]
+            },
+            {
+                id: "auto_02",
+                dim: "autonomy",
+                dimName: "Autonomy & Ambiguity",
+                icon: "🚀",
+                isQuick: false,
+                title: "Project Execution from 0 to 1",
+                scenario: "You are tasked with kickstarting a brand new domain or Greenfield microservice from scratch. How do you manage execution?",
+                options: [
+                    { score: 1.0, text: "I wait for the architecture skeleton and repository scaffolding to be set up by seniors before picking up tickets." },
+                    { score: 2.0, text: "I set up the repo using standard company templates, write boilerplate CRUD endpoints, and implement the initial feature spec." },
+                    { score: 3.5, text: "I write the Architecture RFC, define domain models, establish testing frameworks, CI/CD pipeline, and coordinate integration with dependent services." },
+                    { score: 4.5, text: "I navigate cross-team dependencies, unblock legal/security approvals, build evolutionary architecture that can adapt to changing product needs, and guarantee smooth rollout." },
+                    { score: 5.0, text: "I identify new product opportunities through technology innovation, assemble strategic teams, and lead high-risk, high-reward ventures that redefine company capabilities." }
+                ]
+            },
+            {
+                id: "auto_03",
+                dim: "autonomy",
+                dimName: "Autonomy & Ambiguity",
+                icon: "🚀",
+                isQuick: false,
+                title: "Cross-Team Friction & Unblocking Dependencies",
+                scenario: "Your team's highest priority initiative is completely blocked because another platform team has delayed building a required API for 2 consecutive quarters.",
+                options: [
+                    { score: 1.0, text: "I put my ticket in 'Blocked' status and wait until the other team finishes." },
+                    { score: 2.0, text: "I ping the other team in Slack every few days asking for updates on their delivery date." },
+                    { score: 3.8, text: "I propose an internal open-source model: I draft the API contract, offer to write the PR directly into their repository, and only request their code review and deployment." },
+                    { score: 4.7, text: "I bring both engineering managers together, demonstrate the company revenue impact of the blockage, realign quarterly roadmap priorities, or architect a temporary decoupling adapter." },
+                    { score: 5.0, text: "I identify the systemic organizational dysfunction (silos, conflicting incentives, misaligned OKRs), partner with VPs of Engineering to redesign team topologies and service boundaries." }
                 ]
             }
         ];
 
+        let activeQuestions = [];
         let currentIdx = 0;
         let candidateName = "Engineer";
         let candidateTrack = "general";
@@ -271,18 +470,29 @@
         function startAssessment() {
             candidateName = document.getElementById("candidateName").value.trim() || "Engineer";
             candidateTrack = document.getElementById("candidateTrack").value;
+            const evalMode = document.querySelector('input[name="evalMode"]:checked').value;
+
+            if (evalMode === "quick") {
+                activeQuestions = ALL_QUESTIONS.filter(q => q.isQuick);
+            } else {
+                activeQuestions = ALL_QUESTIONS; // All 15 questions
+            }
+
+            currentIdx = 0;
+            userAnswers = {};
+
             document.getElementById("introScreen").classList.add("hidden");
             document.getElementById("questionScreen").classList.remove("hidden");
             renderQuestion();
         }
 
         function renderQuestion() {
-            const q = QUESTIONS[currentIdx];
+            const q = activeQuestions[currentIdx];
             document.getElementById("qCurrent").textContent = currentIdx + 1;
-            document.getElementById("qTotal").textContent = QUESTIONS.length;
-            document.getElementById("progressBar").style.width = `${((currentIdx + 1) / QUESTIONS.length) * 100}%`;
+            document.getElementById("qTotal").textContent = activeQuestions.length;
+            document.getElementById("progressBar").style.width = `${((currentIdx + 1) / activeQuestions.length) * 100}%`;
             document.getElementById("qDimIcon").textContent = q.icon;
-            document.getElementById("qDimName").textContent = q.dimension;
+            document.getElementById("qDimName").textContent = q.dimName;
             document.getElementById("qTitle").textContent = q.title;
             document.getElementById("qScenario").textContent = q.scenario;
 
@@ -303,8 +513,13 @@
         }
 
         function selectOption(score) {
-            userAnswers[QUESTIONS[currentIdx].id] = score;
-            if (currentIdx < QUESTIONS.length - 1) {
+            const q = activeQuestions[currentIdx];
+            if (!userAnswers[q.dim]) {
+                userAnswers[q.dim] = [];
+            }
+            userAnswers[q.dim].push(score);
+
+            if (currentIdx < activeQuestions.length - 1) {
                 currentIdx++;
                 renderQuestion();
             } else {
@@ -316,15 +531,24 @@
             document.getElementById("questionScreen").classList.add("hidden");
             document.getElementById("resultScreen").classList.remove("hidden");
 
-            const dimScores = [
-                userAnswers["craft"] || 1.0,
-                userAnswers["ownership"] || 1.0,
-                userAnswers["impact"] || 1.0,
-                userAnswers["leadership"] || 1.0,
-                userAnswers["autonomy"] || 1.0
-            ];
+            const dims = ["craft", "ownership", "impact", "leadership", "autonomy"];
+            const dimScores = dims.map(d => {
+                const arr = userAnswers[d] || [1.0];
+                return arr.reduce((a, b) => a + b, 0) / arr.length;
+            });
 
-            const overall = dimScores.reduce((a, b) => a + b, 0) / dimScores.length;
+            // Track weights
+            let weights = [0.25, 0.20, 0.20, 0.15, 0.20]; // general
+            if (candidateTrack === "backend") weights = [0.30, 0.25, 0.15, 0.10, 0.20];
+            else if (candidateTrack === "frontend") weights = [0.30, 0.15, 0.25, 0.10, 0.20];
+            else if (candidateTrack === "devops") weights = [0.25, 0.35, 0.10, 0.10, 0.20];
+            else if (candidateTrack === "tech_lead") weights = [0.15, 0.10, 0.25, 0.30, 0.20];
+
+            let overall = 0;
+            for (let i = 0; i < 5; i++) {
+                overall += dimScores[i] * weights[i];
+            }
+
             let code = "L1", title = "Associate / Junior Software Engineer";
             if (overall >= 4.6) { code = "L5"; title = "Principal / Distinguished Engineer"; }
             else if (overall >= 3.8) { code = "L4"; title = "Staff Software Engineer"; }
@@ -334,7 +558,7 @@
             const percentile = Math.min(99, Math.round(5 + (overall - 1.0) * 23.5));
 
             document.getElementById("resCandidate").textContent = `${candidateName}'s Seniority Profile`;
-            document.getElementById("resSubtitle").textContent = `Track: ${candidateTrack.toUpperCase()} • Assessed at: ${new Date().toLocaleDateString()}`;
+            document.getElementById("resSubtitle").textContent = `Track: ${candidateTrack.toUpperCase()} • Mode: ${activeQuestions.length} Scenarios • Assessed: ${new Date().toLocaleDateString()}`;
             document.getElementById("resLevelCode").textContent = code;
             document.getElementById("resLevelTitle").textContent = title;
             document.getElementById("resScore").innerHTML = `${overall.toFixed(2)} <span class="text-xs text-slate-500 font-normal">/ 5.0</span>`;
@@ -347,7 +571,7 @@
                 data: {
                     labels: ['Craft', 'Reliability', 'Impact', 'Leadership', 'Autonomy'],
                     datasets: [{
-                        data: dimScores,
+                        data: dimScores.map(s => Number(s.toFixed(2))),
                         fill: true,
                         backgroundColor: 'rgba(56, 189, 248, 0.25)',
                         borderColor: '#38bdf8',
@@ -380,7 +604,7 @@
                 card.innerHTML = `
                     <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
                         <span>${icons[idx]} ${labels[idx]}</span>
-                        <span class="font-bold text-sky-400">${s.toFixed(1)}</span>
+                        <span class="font-bold text-sky-400">${s.toFixed(2)}</span>
                     </div>
                     <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2">
                         <div class="bg-sky-400 h-1.5 rounded-full" style="width: ${(s/5)*100}%"></div>
@@ -394,17 +618,17 @@
             roadmapContainer.innerHTML = `
                 <div class="border-l-2 border-sky-500 pl-4">
                     <h4 class="font-bold text-white text-sm">⚡ Craft & Architecture</h4>
-                    <p class="text-xs text-slate-300 mt-1">• Draft 2 technical design RFCs before implementing high-complexity modules.</p>
+                    <p class="text-xs text-slate-300 mt-1">• Draft technical RFCs before high-complexity modules; master Expand-Contract data migrations.</p>
                     <span class="text-xs text-sky-400 italic">📖 Recommended: Designing Data-Intensive Applications by Martin Kleppmann</span>
                 </div>
                 <div class="border-l-2 border-indigo-500 pl-4">
                     <h4 class="font-bold text-white text-sm">🛡️ Reliability & Ownership</h4>
-                    <p class="text-xs text-slate-300 mt-1">• Define SLIs/SLOs for critical endpoints and participate actively in on-call rotations.</p>
-                    <span class="text-xs text-sky-400 italic">📖 Recommended: Site Reliability Engineering (Google SRE)</span>
+                    <p class="text-xs text-slate-300 mt-1">• Audit on-call alerts to eliminate noise, enforce SLOs, and lead blameless post-mortems.</p>
+                    <span class="text-xs text-sky-400 italic">📖 Recommended: Site Reliability Engineering (Google SRE Book)</span>
                 </div>
                 <div class="border-l-2 border-purple-500 pl-4">
                     <h4 class="font-bold text-white text-sm">🌟 Leadership & Influence</h4>
-                    <p class="text-xs text-slate-300 mt-1">• Actively mentor at least 1 peer and organize architecture sharing sessions.</p>
+                    <p class="text-xs text-slate-300 mt-1">• Elevate PR review standards, mentor peers into promotion, and turn disagreements into alignment.</p>
                     <span class="text-xs text-sky-400 italic">📖 Recommended: Staff Engineer by Will Larson</span>
                 </div>
             `;
