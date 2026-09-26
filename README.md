@@ -21,6 +21,9 @@
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Try_Online-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://alisenn.github.io/levelcraft/)
+
+[🎮 Live Web Demo](https://alisenn.github.io/levelcraft/) •
 [Features](#-key-features) •
 [Quickstart](#-quickstart) •
 [Interactive Assessment](#-interactive-assessment) •
