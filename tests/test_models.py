@@ -1,8 +1,8 @@
 """
-Unit tests for LevelCraft models and schemas.
+Unit tests for SeniorMeter models and schemas.
 """
 
-from levelcraft.models import SeniorityLevel, DimensionId, Track
+from seniormeter.models import SeniorityLevel, DimensionId, Track
 
 
 def test_seniority_level_properties():

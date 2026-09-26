@@ -1,16 +1,17 @@
 <div align="center">
 
 ```
-   __                     _______              ______  
-  / /   ___ _   _____    / ____/________ _____/ / / /_ 
- / /   / _ \ | / / _ \  / /   / ___/ __ `/ __  / / __/ 
-/ /___/  __/ |/ /  __/ / /___/ /  / /_/ / /_/ / / /_   
-/_____/\___/|___/\___/  \____/_/   \__,_/\__,_/_/\__/   
+   _____            _             __  __      _            
+  / ____|          (_)           |  \/  |    | |           
+ | (___   ___ _ __  _  ___  _ __ | \  / | ___| |_ ___ _ __ 
+  \___ \ / _ \ '_ \| |/ _ \| '__|| |\/| |/ _ \ __/ _ \ '__|
+  ____) |  __/ | | | | (_) | |   | |  | |  __/ ||  __/ |   
+ |_____/ \___|_| |_|_|\___/|_|   |_|  |_|\___|\__\___|_|   
 ```
 
-### The Open Source Seniority & Competency Matrix Engine for Software Engineers
+### The Open Source Seniority & Competency Diagnostic Suite for Software Engineers
 
-*Demystify your career ladder. Benchmark your skills across 5 core engineering pillars, generate interactive radar diagnostics, and chart your promotion roadmap.*
+*Demystify your career ladder. Take the comprehensive 60-minute, 30-case-study seniority exam across 5 engineering pillars, generate interactive radar diagnostics, and chart your promotion roadmap.*
 
 ---
 
@@ -21,42 +22,40 @@
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Try_Online-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://alisenn.github.io/levelcraft/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Take_60--Min_Exam-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://alisenn.github.io/levelcraft/)
 
-[🎮 Live Web Demo](https://alisenn.github.io/levelcraft/) •
+[🎓 Live Web Exam](https://alisenn.github.io/levelcraft/) •
 [Features](#-key-features) •
 [Quickstart](#-quickstart) •
-[Interactive Assessment](#-interactive-assessment) •
+[Exam Modes](#-examination-modes) •
 [The 5 Pillars](#-the-5-engineering-pillars) •
 [CLI Commands](#-cli-reference) •
-[Badge Generation](#-github-profile-badge) •
 [Methodology](#-framework-methodology)
 
 </div>
 
 ---
 
-## 💡 Why LevelCraft?
+## 💡 Why SeniorMeter?
 
-Engineering titles are broken. What one company calls a **"Senior Software Engineer"** is a **"Mid-level"** at Big Tech, or a **"Tech Lead"** at an early-stage startup. Promotion rubrics are often opaque, politicized, or buried inside private company wikis.
+Engineering job titles are inconsistent and fragmented across the tech industry:
+- What one startup calls a **"Senior Software Engineer"** is often an **L3 / Mid-level** at Tier-1 tech firms.
+- Technical interviews rely on **LeetCode & algorithmic puzzles** that have zero correlation with real engineering craftsmanship, production incident response, or architectural leadership.
+- Career progression rubrics are often opaque, political, or buried inside private corporate wikis.
 
-**LevelCraft** is an open-source, developer-first diagnostic engine designed to bring transparency and standardization to software engineering careers.
-
-- 🎯 **No Trivia**: Evaluates real-world behavioral scenarios (incident response, technical RFCs, tech debt trade-offs, system scalability).
-- 📊 **Calibrated Benchmarks**: Grounded in public engineering ladders from **Dropbox, Google, Spotify, and Will Larson’s Staff Engineer framework**.
-- 🛠️ **Developer Ergonomics**: Rich CLI UI, standalone offline HTML radar dashboards, Markdown reports for 1-on-1s, and SVG GitHub profile badges.
+**SeniorMeter** bridges this gap as an open-source, community-governed diagnostic engine that benchmarks software engineers through **30 deep, production-tested scenario case studies** synthesized from public engineering frameworks at **Google, Dropbox, Spotify, and StaffEng**.
 
 ---
 
 ## ⚡ Key Features
 
-- 🖥️ **Interactive Terminal Assessment**: Engaging, scenario-based questionnaires with Rich terminal formatting.
-- ⚡ **Rapid 3-Minute or Deep Benchmarks**: Choose between a 5-question quick pulse check or full comprehensive diagnostics.
-- 🌐 **Self-Contained Radar Dashboard**: Generates a single-file, dark-mode Tailwind + Chart.js radar report with zero external server dependencies.
-- 🎯 **Tailored Career Tracks**: Customizable weighting for **General SWE, Backend, Frontend, DevOps / Platform, and Tech Lead**.
-- 📈 **Percentile Calibration**: Compares your competencies against real-world engineering distributions.
-- 🧭 **Promotion Gap Analysis**: Concrete action items and curated reading lists (e.g. *Designing Data-Intensive Applications*, *The Staff Engineer's Path*) to reach your next level.
-- 🛡️ **GitHub Profile Badges**: Generate crisp SVG badges to showcase your validated tier in your GitHub profile README.
+- 🎓 **60-Minute Comprehensive Examination (30 Scenarios)**: A rigorous 5-stage certification exam covering distributed systems, zero-downtime data migrations, SRE & incident response, product ROI, code review culture, and organizational ambiguity.
+- ⚡ **3-Minute Rapid Pulse Check (5 Scenarios)**: Quick pulse diagnostic for rapid self-assessment.
+- 🌐 **Interactive Radar Dashboard**: Zero-dependency, offline-capable single-file HTML report featuring an interactive Chart.js radar chart.
+- 🎯 **Domain-Specific Tracks**: Calibrated weighting for **General SWE, Backend, Frontend, DevOps / Platform, and Tech Lead**.
+- 📈 **Industry Percentile Calibration**: Compare your placement against empirical software engineering demographics (Top 5% to 99th percentile).
+- 🧭 **Targeted Promotion Roadmap**: Concrete behavioral milestones and curated book recommendations (e.g. *Designing Data-Intensive Applications*, *Site Reliability Engineering*, *Staff Engineer*).
+- 🛡️ **GitHub Profile Badges**: Generate crisp SVG badges to display on your personal GitHub README.
 
 ---
 
@@ -72,88 +71,65 @@ cd levelcraft
 pip install -e .
 ```
 
-Verify the installation:
+Verify installation:
 
 ```bash
-levelcraft version
+seniormeter version
 ```
 
 ---
 
-## 🧪 Interactive Assessment
+## 🧪 Examination Modes
 
-### 1. Rapid 3-Minute Benchmark
-
-Run a rapid 5-scenario evaluation and generate an interactive HTML dashboard:
+### 1. 🎓 The 60-Minute Comprehensive Examination (30 Scenarios)
+The official in-depth benchmark consisting of 5 distinct stages (6 scenarios per pillar):
 
 ```bash
-levelcraft quick --name "Jane Doe" --track backend --html report.html --open
+seniormeter exam --name "Jane Doe" --track backend --html report.html --open
 ```
 
-### 2. Comprehensive Assessment with Full Exports
+### 2. ⚡ The 3-Minute Quick Pulse Check (5 Scenarios)
+A rapid 5-scenario evaluation:
 
 ```bash
-levelcraft assess \
-  --name "Alex Smith" \
-  --track general \
+seniormeter quick --name "Alex Smith" --track general --html report.html --open
+```
+
+### 3. Full Custom Assessment with Badges and Markdown Export
+```bash
+seniormeter assess \
+  --name "Alice Dev" \
+  --track tech_lead \
   --html report.html \
-  --md report.md \
-  --json report.json \
+  --md 1on1_review.md \
+  --json data.json \
   --badge seniority_badge.svg \
   --open
 ```
 
 ---
 
-## 📊 The 5 Engineering Pillars
+## 📊 The 5 Engineering Pillars (30 Scenarios)
 
-LevelCraft evaluates engineering seniority across 5 core dimensions:
-
-| Pillar | Focus Areas | Key Behaviors |
-| :--- | :--- | :--- |
-| **⚡ Craft & Architecture** | Code quality, design patterns, scalability, testing | From writing unit tests to designing multi-region distributed architectures. |
-| **🛡️ Reliability & Ownership** | CI/CD, production observability, incident triage, SLIs/SLOs | From monitoring personal PRs to enterprise disaster recovery and zero-downtime engineering. |
-| **🎯 Business & Product Impact** | ROI, MVP scoping, metrics, user empathy | From completing Jira tickets to driving high-leverage technical bets that impact company valuation. |
-| **🌟 Leadership & Influence** | Mentorship, technical RFCs, consensus building | From active learning to force multiplication, sponsoring peers, and steering org-wide tech strategy. |
-| **🚀 Autonomy & Ambiguity** | Problem navigation, scope, 0-to-1 execution | From structured tasks to solving undefined, multi-quarter strategic engineering challenges. |
+| Stage | Pillar | Focus Case Studies |
+| :---: | :--- | :--- |
+| **1** | **⚡ Craft & Architecture** | Monolith refactoring, 10x scalability, zero-downtime DB migrations (Expand-Contract), distributed caching stampedes, microservices vs modular monoliths, zero-day CVE mitigation. |
+| **2** | **🛡️ Reliability & Ownership** | Sev-1 incident commander, golden signals observability, alert fatigue / on-call health, chaos engineering / multi-region DR, SLO error budgets, cascading failure mitigation. |
+| **3** | **🎯 Business & Product Impact** | Tech debt vs feature velocity trade-offs, metric-driven ROI, technical spikes vs Fortune 500 contracts, lean user discovery, FinOps cloud cost reduction, Buy vs Build TCO. |
+| **4** | **🌟 Leadership & Influence** | RFC technical consensus, peer mentorship & promotion sponsorship, code review quality & PR hygiene, cross-team architecture guilds, raising the hiring bar, C-level risk communication. |
+| **5** | **🚀 Autonomy & Ambiguity** | Navigating vague OKRs, 0-to-1 greenfield platform execution, cross-team dependency unblocking, conflicting stakeholder demands, systemic blind spots, multi-year horizon planning. |
 
 ---
 
 ## 🗂️ CLI Reference
 
-### 🔍 Explore the Competency Matrix
-Inspect observable behaviors across all levels (L1 to L5):
-
 ```bash
-# View complete matrix
-levelcraft matrix
-
-# Filter by level
-levelcraft matrix --level L3
-
-# Filter by dimension
-levelcraft matrix --dimension craft
-```
-
-### ⚖️ Side-by-Side Level Comparison
-Compare expectations between any two levels (e.g., Mid-level vs Senior, or Senior vs Staff):
-
-```bash
-levelcraft compare L2 L3
-levelcraft compare L3 L4
-```
-
-### 🛡️ GitHub Profile Badge
-Generate a crisp SVG badge for your GitHub profile README:
-
-```bash
-levelcraft badge --level L3 --output seniority_badge.svg
-```
-
-Add it to your profile markdown:
-
-```markdown
-[![Seniority Level](seniority_badge.svg)](https://github.com/alisenn/levelcraft)
+seniormeter exam               # Run 60-minute in-depth 30-scenario diagnostic exam
+seniormeter quick              # Run 3-minute rapid pulse check (5 scenarios)
+seniormeter matrix             # Inspect complete competency rubric table
+seniormeter matrix --level L3  # Filter matrix expectations for Senior level
+seniormeter compare L2 L3      # Side-by-side behavioral comparison between levels
+seniormeter badge --level L3   # Generate standalone SVG badge for GitHub README
 ```
 
 ---
@@ -168,22 +144,9 @@ Add it to your profile markdown:
 
 ---
 
-## 🛠️ Technology Tracks
-
-Tailor assessment weighting based on your discipline:
-
-```bash
-levelcraft assess --track backend     # Emphasizes Craft, System Design & Reliability
-levelcraft assess --track frontend    # Emphasizes Craft, User Experience & Impact
-levelcraft assess --track devops      # Emphasizes Reliability, Infrastructure & Observability
-levelcraft assess --track tech_lead   # Emphasizes Leadership, Impact & Alignment
-```
-
----
-
 ## 🔬 Framework Methodology & Citations
 
-The LevelCraft scoring rubric and progression model are curated from research and public engineering frameworks:
+The SeniorMeter scoring rubric and progression model are curated from research and public engineering frameworks:
 
 1. **Dropbox Engineering Career Framework**: Core foundational dimensions of Results, Direction, and Mastery.
 2. **Will Larson's Staff Engineer Framework**: Archetypes of Staff+ leadership (Tech Lead, Architect, Solver, Right Hand).
@@ -193,17 +156,7 @@ The LevelCraft scoring rubric and progression model are curated from research an
 
 ---
 
-## 🤝 Contributing
-
-We welcome community contributions! Whether you want to add new questions to the bank, define new tracks (Data Engineering, Mobile, Security), or refine rubrics:
-
-1. Read our [Contributing Guidelines](CONTRIBUTING.md).
-2. Fork the repository and create your feature branch: `git checkout -b feat/new-track`.
-3. Submit a Pull Request with passing tests!
-
----
-
 ## 📄 License
 
-LevelCraft is open-source software licensed under the [MIT License](LICENSE).
+SeniorMeter is open-source software licensed under the [MIT License](LICENSE).
 Made with care for software engineers worldwide. 🌟

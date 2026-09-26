@@ -5,7 +5,7 @@ Computes multi-dimensional competencies, industry benchmark percentiles, and gap
 
 from datetime import datetime
 from typing import Dict, List, Optional
-from levelcraft.models import (
+from seniormeter.models import (
     AssessmentResult,
     DimensionId,
     DimensionScore,
@@ -14,7 +14,7 @@ from levelcraft.models import (
     SeniorityLevel,
     Track,
 )
-from levelcraft.matrix import (
+from seniormeter.matrix import (
     DIMENSION_METADATA,
     GROWTH_ROADMAP,
     QUESTIONS,

@@ -2,9 +2,9 @@
 Unit tests for the seniority evaluator engine.
 """
 
-from levelcraft.models import SeniorityLevel, DimensionId, Track
-from levelcraft.evaluator import SeniorityEvaluator
-from levelcraft.matrix import QUESTIONS
+from seniormeter.models import SeniorityLevel, DimensionId, Track
+from seniormeter.evaluator import SeniorityEvaluator
+from seniormeter.matrix import QUESTIONS
 
 
 def test_evaluator_all_junior_answers():
@@ -38,11 +38,9 @@ def test_percentile_calibration():
 
 
 def test_track_weighting_difference():
-    # In Backend track, CRAFT & OWNERSHIP weight more than in TECH_LEAD track
     backend_eval = SeniorityEvaluator(track=Track.BACKEND)
     lead_eval = SeniorityEvaluator(track=Track.TECH_LEAD)
 
-    # High leadership (5.0), low craft (2.0)
     skewed_answers = {}
     for q in QUESTIONS:
         if q.dimension == DimensionId.LEADERSHIP:
@@ -55,5 +53,4 @@ def test_track_weighting_difference():
     backend_res = backend_eval.evaluate_answers(skewed_answers)
     lead_res = lead_eval.evaluate_answers(skewed_answers)
 
-    # Tech lead track should score higher because leadership has 30% weight vs 10%
     assert lead_res.overall_score > backend_res.overall_score

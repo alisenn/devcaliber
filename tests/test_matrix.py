@@ -2,8 +2,8 @@
 Unit tests for competency matrix and question bank.
 """
 
-from levelcraft.models import DimensionId, SeniorityLevel
-from levelcraft.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS, GROWTH_ROADMAP
+from seniormeter.models import DimensionId, SeniorityLevel
+from seniormeter.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS, GROWTH_ROADMAP
 
 
 def test_matrix_covers_all_dimensions():
@@ -22,7 +22,7 @@ def test_level_rubrics_cover_all_levels():
 
 
 def test_questions_have_valid_structure():
-    assert len(QUESTIONS) >= 5
+    assert len(QUESTIONS) == 30  # 30 comprehensive scenario questions (6 per dimension)
     for q in QUESTIONS:
         assert q.id
         assert q.dimension in DimensionId
@@ -31,6 +31,14 @@ def test_questions_have_valid_structure():
         for opt in q.options:
             assert 1.0 <= opt.score <= 5.0
             assert opt.level_indicator in SeniorityLevel
+
+
+def test_each_dimension_has_six_questions():
+    dim_counts = {d: 0 for d in DimensionId}
+    for q in QUESTIONS:
+        dim_counts[q.dimension] += 1
+    for dim, count in dim_counts.items():
+        assert count == 6, f"Dimension {dim} should have 6 questions, got {count}"
 
 
 def test_growth_roadmap_entries():

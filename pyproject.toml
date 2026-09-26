@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "levelcraft"
-version = "1.0.0"
-description = "The Open Source Engineering Seniority & Competency Benchmark Engine for Software Engineers"
+name = "seniormeter"
+version = "2.0.0"
+description = "The Open Source Engineering Seniority & Career Matrix Diagnostic Engine for Software Engineers"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [
-    { name = "LevelCraft Contributors" }
+    { name = "SeniorMeter Contributors" }
 ]
 keywords = [
     "career",
@@ -51,19 +51,20 @@ dev = [
 ]
 
 [project.scripts]
-levelcraft = "levelcraft.cli:main"
+seniormeter = "seniormeter.cli:main"
+levelcraft = "seniormeter.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/alisenn/levelcraft"
+Homepage = "https://seniormeter.com"
 Repository = "https://github.com/alisenn/levelcraft"
 Issues = "https://github.com/alisenn/levelcraft/issues"
 
 [tool.setuptools.packages.find]
-include = ["levelcraft*"]
+include = ["seniormeter*"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-ra -q --cov=levelcraft"
+addopts = "-ra -q --cov=seniormeter"
 testpaths = [
     "tests"
 ]

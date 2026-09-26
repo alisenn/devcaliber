@@ -1,5 +1,6 @@
 """
-LevelCraft CLI: Command Line Interface for engineering seniority assessment and matrix exploration.
+SeniorMeter CLI: Command Line Interface for engineering seniority assessment and matrix exploration.
+Features 60-minute in-depth benchmarking (30 scenarios) and rapid pulse checks.
 """
 
 import sys
@@ -14,15 +15,15 @@ from rich.panel import Panel
 from rich.table import Table
 from rich import box
 
-from levelcraft import __version__
-from levelcraft.models import SeniorityLevel, DimensionId, Track
-from levelcraft.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS
-from levelcraft.evaluator import SeniorityEvaluator
-from levelcraft.reporter import Reporter, LEVEL_COLORS
+from seniormeter import __version__
+from seniormeter.models import SeniorityLevel, DimensionId, Track
+from seniormeter.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS
+from seniormeter.evaluator import SeniorityEvaluator
+from seniormeter.reporter import Reporter, LEVEL_COLORS
 
 app = typer.Typer(
-    name="levelcraft",
-    help="🧭 LevelCraft: Engineering Seniority & Competency Matrix Engine.",
+    name="seniormeter",
+    help="🧭 SeniorMeter: Engineering Seniority & Competency Matrix Diagnostic Engine.",
     add_completion=False,
 )
 console = Console()
@@ -30,12 +31,13 @@ console = Console()
 
 def render_banner():
     banner = r"""[bold cyan]
-   __                     _______              ______  
-  / /   ___ _   _____    / ____/________ _____/ / / /_ 
- / /   / _ \ | / / _ \  / /   / ___/ __ `/ __  / / __/ 
-/ /___/  __/ |/ /  __/ / /___/ /  / /_/ / /_/ / / /_   
-/_____/\___/|___/\___/  \____/_/   \__,_/\__,_/_/\__/   
-[/][dim]Open Source Software Engineering Seniority & Matrix Benchmark[/]
+   _____            _             __  __      _            
+  / ____|          (_)           |  \/  |    | |           
+ | (___   ___ _ __  _  ___  _ __ | \  / | ___| |_ ___ _ __ 
+  \___ \ / _ \ '_ \| |/ _ \| '__|| |\/| |/ _ \ __/ _ \ '__|
+  ____) |  __/ | | | | (_) | |   | |  | |  __/ ||  __/ |   
+ |_____/ \___|_| |_|_|\___/|_|   |_|  |_|\___|\__\___|_|   
+[/][dim]The Open Source Engineering Seniority & Career Matrix Engine • seniormeter.com[/]
 """
     console.print(banner)
 
@@ -44,7 +46,7 @@ def render_banner():
 def assess(
     name: str = typer.Option("Engineer", "--name", "-n", help="Candidate or engineer name"),
     track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track (general, backend, frontend, devops, tech_lead)"),
-    quick: bool = typer.Option(False, "--quick", "-q", help="Run 5-question rapid benchmark"),
+    quick: bool = typer.Option(False, "--quick", "-q", help="Run 5-question rapid pulse check"),
     export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML dashboard report"),
     export_md: Optional[str] = typer.Option(None, "--md", help="Path to save Markdown report"),
     export_json: Optional[str] = typer.Option(None, "--json", help="Path to save JSON report"),
@@ -53,15 +55,25 @@ def assess(
 ):
     """Run an interactive assessment session to evaluate engineering seniority."""
     render_banner()
+    mode_label = "5-Question Rapid Pulse" if quick else f"Comprehensive {len(QUESTIONS)}-Question Diagnostic Exam"
     console.print(f"[bold]Starting Seniority Assessment for [cyan]{name}[/] (Track: [green]{track.value.upper()}[/])[/]")
-    console.print("[dim]Answer each scenario honestly reflecting your primary natural behavior in production.[/dim]\n")
+    console.print(f"[dim]Mode: {mode_label}. Answer each scenario reflecting your natural behavior in production.[/dim]\n")
 
     eval_questions = [q for q in QUESTIONS if (not quick or q.is_quick)]
     total = len(eval_questions)
     answers = {}
 
+    current_dim = None
+
     for idx, q in enumerate(eval_questions, start=1):
         dim_info = DIMENSION_METADATA.get(q.dimension, {})
+
+        # Stage transition announcement
+        if q.dimension != current_dim:
+            current_dim = q.dimension
+            stage_idx = list(DimensionId).index(q.dimension) + 1
+            console.print(f"\n[bold yellow]━━━ STAGE {stage_idx}/5: {dim_info.get('name', 'Pillar').upper()} ━━━[/]")
+
         console.print(Panel(
             f"[bold yellow]Scenario ({idx}/{total}):[/] [bold white]{q.title}[/]\n\n"
             f"[italic text-slate-300]{q.scenario}[/]",
@@ -95,7 +107,7 @@ def assess(
     result = evaluator.evaluate_answers(
         answers=answers,
         candidate_name=name,
-        assessment_mode="rapid" if quick else "standard",
+        assessment_mode="rapid" if quick else "comprehensive_exam",
     )
 
     reporter = Reporter(result, console=console)
@@ -103,7 +115,7 @@ def assess(
 
     # Exports
     if export_html or open_browser:
-        target_html = export_html or f"levelcraft_report_{name.lower().replace(' ', '_')}.html"
+        target_html = export_html or f"seniormeter_report_{name.lower().replace(' ', '_')}.html"
         html_path = Path(target_html)
         html_path.parent.mkdir(parents=True, exist_ok=True)
         html_content = reporter.generate_html_dashboard()
@@ -135,6 +147,26 @@ def assess(
 
 
 @app.command()
+def exam(
+    name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
+    track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
+    export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
+    open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
+):
+    """Run the 60-minute comprehensive 30-scenario seniority examination."""
+    assess(
+        name=name,
+        track=track,
+        quick=False,
+        export_html=export_html,
+        export_md=None,
+        export_json=None,
+        badge=None,
+        open_browser=open_browser,
+    )
+
+
+@app.command()
 def quick(
     name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
     track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
@@ -161,7 +193,7 @@ def matrix(
 ):
     """Inspect the engineering career competency rubric table."""
     render_banner()
-    table = Table(title="LevelCraft Engineering Competency Matrix", box=box.ROUNDED, expand=True)
+    table = Table(title="SeniorMeter Engineering Competency Matrix", box=box.ROUNDED, expand=True)
     table.add_column("Dimension", style="bold cyan", width=22)
     table.add_column("Level", style="bold yellow", width=8)
     table.add_column("Expectations & Observable Behaviors", style="white")
@@ -257,8 +289,8 @@ def badge(
 
 @app.command()
 def version():
-    """Show LevelCraft version."""
-    console.print(f"[bold cyan]LevelCraft[/] version [bold white]{__version__}[/]")
+    """Show SeniorMeter version."""
+    console.print(f"[bold cyan]SeniorMeter[/] version [bold white]{__version__}[/]")
 
 
 def main():

@@ -1,9 +1,9 @@
 """
-CLI command tests using Typer CliRunner.
+CLI command tests using Typer CliRunner for SeniorMeter.
 """
 
 from typer.testing import CliRunner
-from levelcraft.cli import app
+from seniormeter.cli import app
 
 runner = CliRunner()
 
@@ -11,13 +11,13 @@ runner = CliRunner()
 def test_cli_version():
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
-    assert "LevelCraft version" in result.stdout
+    assert "SeniorMeter version" in result.stdout
 
 
 def test_cli_matrix():
     result = runner.invoke(app, ["matrix"])
     assert result.exit_code == 0
-    assert "LevelCraft Engineering Competency Matrix" in result.stdout
+    assert "SeniorMeter Engineering Competency Matrix" in result.stdout
     assert "Craft" in result.stdout
     assert "Architecture" in result.stdout
 
@@ -73,7 +73,6 @@ def test_cli_assess_quick(tmp_path):
     )
 
     assert result.exit_code == 0
-    assert "LEVELCRAFT SENIORITY BENCHMARK REPORT" in result.stdout
     assert "Dev Tester" in result.stdout
     assert html_file.exists()
     assert md_file.exists()

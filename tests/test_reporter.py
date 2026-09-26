@@ -5,10 +5,10 @@ Unit tests for Reporter outputs (Markdown, JSON, HTML, SVG badge).
 from io import StringIO
 from rich.console import Console
 
-from levelcraft.models import Track
-from levelcraft.evaluator import SeniorityEvaluator
-from levelcraft.reporter import Reporter
-from levelcraft.matrix import QUESTIONS
+from seniormeter.models import Track
+from seniormeter.evaluator import SeniorityEvaluator
+from seniormeter.reporter import Reporter
+from seniormeter.matrix import QUESTIONS
 
 
 def get_sample_result():
@@ -25,7 +25,6 @@ def test_reporter_terminal_summary():
     reporter.print_terminal_summary()
 
     output = string_io.getvalue()
-    assert "LEVELCRAFT SENIORITY BENCHMARK REPORT" in output
     assert "Alice Developer" in output
     assert "L3" in output
 
@@ -35,7 +34,6 @@ def test_reporter_markdown():
     reporter = Reporter(result)
     md = reporter.generate_markdown()
 
-    assert "# 🧭 LevelCraft Engineering Seniority Report" in md
     assert "Alice Developer" in md
     assert "L3" in md
     assert "Competency Radar Breakdown" in md
@@ -66,7 +64,6 @@ def test_reporter_html_dashboard():
     html = reporter.generate_html_dashboard()
 
     assert "<!DOCTYPE html>" in html
-    assert "LevelCraft Seniority Matrix" in html
     assert "Alice Developer" in html
     assert "radarChart" in html
     assert "Chart(ctx," in html

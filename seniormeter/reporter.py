@@ -12,8 +12,8 @@ from rich.progress_bar import ProgressBar
 from rich.text import Text
 from rich import box
 
-from levelcraft.models import AssessmentResult, DimensionId, SeniorityLevel
-from levelcraft.matrix import DIMENSION_METADATA
+from seniormeter.models import AssessmentResult, DimensionId, SeniorityLevel
+from seniormeter.matrix import DIMENSION_METADATA
 
 
 LEVEL_COLORS: Dict[str, str] = {
