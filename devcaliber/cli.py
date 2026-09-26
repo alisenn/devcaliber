@@ -1,6 +1,7 @@
 """
-SeniorMeter CLI: Command Line Interface for engineering seniority assessment and matrix exploration.
-Features 60-minute in-depth benchmarking (30 scenarios) and rapid pulse checks.
+DevCaliber CLI: Computerized Adaptive Testing (CAT) for Software Engineering Seniority.
+Features real-time step-by-step difficulty adaptation, FAANG/Glassdoor real interview questions,
+and English / Turkish dual language support.
 """
 
 import sys
@@ -15,15 +16,15 @@ from rich.panel import Panel
 from rich.table import Table
 from rich import box
 
-from seniormeter import __version__
-from seniormeter.models import SeniorityLevel, DimensionId, Track
-from seniormeter.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS
-from seniormeter.evaluator import SeniorityEvaluator
-from seniormeter.reporter import Reporter, LEVEL_COLORS
+from devcaliber import __version__
+from devcaliber.models import SeniorityLevel, DimensionId, Track
+from devcaliber.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS
+from devcaliber.evaluator import SeniorityEvaluator, AdaptiveAssessmentEngine
+from devcaliber.reporter import Reporter, LEVEL_COLORS
 
 app = typer.Typer(
-    name="seniormeter",
-    help="🧭 SeniorMeter: Engineering Seniority & Competency Matrix Diagnostic Engine.",
+    name="devcaliber",
+    help="🧭 DevCaliber: Engineering Seniority & Competency Matrix Diagnostic Engine.",
     add_completion=False,
 )
 console = Console()
@@ -31,21 +32,22 @@ console = Console()
 
 def render_banner():
     banner = r"""[bold cyan]
-   _____            _             __  __      _            
-  / ____|          (_)           |  \/  |    | |           
- | (___   ___ _ __  _  ___  _ __ | \  / | ___| |_ ___ _ __ 
-  \___ \ / _ \ '_ \| |/ _ \| '__|| |\/| |/ _ \ __/ _ \ '__|
-  ____) |  __/ | | | | (_) | |   | |  | |  __/ ||  __/ |   
- |_____/ \___|_| |_|_|\___/|_|   |_|  |_|\___|\__\___|_|   
-[/][dim]The Open Source Engineering Seniority & Career Matrix Engine • seniormeter.com[/]
+  _____               _____       _ _ _               
+ |  __ \             / ____|     | (_) |              
+ | |  | | _____   __| |     __ _ | |_| |__   ___ _ __ 
+ | |  | |/ _ \ \ / /| |    / _` || | | '_ \ / _ \ '__|
+ | |__| |  __/\ V / | |___| (_| || | | |_) |  __/ |   
+ |_____/ \___| \_/   \_____\__,_||_|_|_.__/ \___|_|   
+[/][dim]The Open Source Engineering Seniority & Competency Benchmark Suite • devcaliber.com[/]
 """
     console.print(banner)
 
 
 @app.command()
 def assess(
-    name: str = typer.Option("Engineer", "--name", "-n", help="Candidate or engineer name"),
+    name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
     track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track (general, backend, frontend, devops, tech_lead)"),
+    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' for English or 'tr' for Türkçe (Teknik terimler korunur)"),
     quick: bool = typer.Option(False, "--quick", "-q", help="Run 5-question rapid pulse check"),
     export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML dashboard report"),
     export_md: Optional[str] = typer.Option(None, "--md", help="Path to save Markdown report"),
@@ -55,67 +57,97 @@ def assess(
 ):
     """Run an interactive assessment session to evaluate engineering seniority."""
     render_banner()
-    mode_label = "5-Question Rapid Pulse" if quick else f"Comprehensive {len(QUESTIONS)}-Question Diagnostic Exam"
-    console.print(f"[bold]Starting Seniority Assessment for [cyan]{name}[/] (Track: [green]{track.value.upper()}[/])[/]")
-    console.print(f"[dim]Mode: {mode_label}. Answer each scenario reflecting your natural behavior in production.[/dim]\n")
+    is_tr = lang.lower().startswith("tr")
 
-    eval_questions = [q for q in QUESTIONS if (not quick or q.is_quick)]
-    total = len(eval_questions)
+    if is_tr:
+        mode_label = "5 Soruluk Hızlı Pulse Check" if quick else f"Kapsamlı {len(QUESTIONS)} Soruluk Adaptif Tanı Sınavı"
+        console.print(f"[bold][cyan]{name}[/] için Kıdem Değerlendirmesi Başlatılıyor (Track: [green]{track.value.upper()}[/])[/]")
+        console.print(f"[dim]Mod: {mode_label}. Her senaryoyu prodüksiyondaki doğal refleksi yansıtacak şekilde yanıtlayın.[/dim]")
+        console.print("[italic dim]⚡ Sınav bir önceki soruya verdiğiniz cevabın yetkinliğine göre zorlaşır veya kolaylaşır.[/italic dim]\n")
+    else:
+        mode_label = "5-Question Rapid Pulse" if quick else f"Comprehensive {len(QUESTIONS)}-Question Adaptive Exam"
+        console.print(f"[bold]Starting Seniority Assessment for [cyan]{name}[/] (Track: [green]{track.value.upper()}[/])[/]")
+        console.print(f"[dim]Mode: {mode_label}. Answer each scenario reflecting your natural behavior in production.[/dim]")
+        console.print("[italic dim]⚡ Questions adaptively scale up or down based on your previous answer's competency.[/italic dim]\n")
+
+    engine = AdaptiveAssessmentEngine(track=track, questions=QUESTIONS)
+    dimensions = list(DimensionId)
     answers = {}
+    q_index = 0
+    total_to_ask = 5 if quick else len(QUESTIONS)
 
-    current_dim = None
+    for stage_idx, dim in enumerate(dimensions, start=1):
+        dim_info = DIMENSION_METADATA.get(dim, {})
+        stage_label = f"AŞAMA {stage_idx}/5" if is_tr else f"STAGE {stage_idx}/5"
+        console.print(f"\n[bold yellow]━━━ {stage_label}: {dim_info.get('name', 'Pillar').upper()} ━━━[/]")
 
-    for idx, q in enumerate(eval_questions, start=1):
-        dim_info = DIMENSION_METADATA.get(q.dimension, {})
+        while True:
+            adaptive_result = engine.get_next_question(dimension=dim, is_quick=quick)
+            if not adaptive_result:
+                break
 
-        # Stage transition announcement
-        if q.dimension != current_dim:
-            current_dim = q.dimension
-            stage_idx = list(DimensionId).index(q.dimension) + 1
-            console.print(f"\n[bold yellow]━━━ STAGE {stage_idx}/5: {dim_info.get('name', 'Pillar').upper()} ━━━[/]")
+            q, adaptation_msg = adaptive_result
+            q_index += 1
 
-        console.print(Panel(
-            f"[bold yellow]Scenario ({idx}/{total}):[/] [bold white]{q.title}[/]\n\n"
-            f"[italic text-slate-300]{q.scenario}[/]",
-            title=f"{dim_info.get('icon', '⚡')} {dim_info.get('name', 'Dimension')}",
-            border_style="cyan",
-            box=box.ROUNDED,
-        ))
+            if q_index > 1:
+                console.print(f"[dim cyan]{adaptation_msg}[/]")
 
-        letters = ["A", "B", "C", "D", "E"]
-        valid_choices = letters[:len(q.options)]
+            # Scenario details
+            q_title = (q.title_tr if is_tr and q.title_tr else q.title)
+            q_scenario = (q.scenario_tr if is_tr and q.scenario_tr else q.scenario)
+            source_badge = f" [bold magenta]({q.interview_source})[/]" if q.interview_source else ""
 
-        for ltr, opt in zip(letters, q.options):
-            console.print(f"  [bold cyan]({ltr})[/] {opt.text}")
+            scenario_word = "Senaryo" if is_tr else "Scenario"
+            difficulty_word = "Zorluk" if is_tr else "Difficulty"
 
-        console.print("")
-        choice = ""
-        while choice not in valid_choices:
-            choice = Prompt.ask(
-                f"[bold]Select option ({'/'.join(valid_choices)})[/]",
-                default="A",
-                console=console,
-            ).strip().upper()
+            console.print(Panel(
+                f"[bold yellow]{scenario_word} ({q_index}/{total_to_ask}) [{difficulty_word}: Tier {q.difficulty}]:[/] [bold white]{q_title}[/]{source_badge}\n\n"
+                f"[italic text-slate-300]{q_scenario}[/]",
+                title=f"{dim_info.get('icon', '⚡')} {dim_info.get('name', 'Dimension')}",
+                border_style="cyan",
+                box=box.ROUNDED,
+            ))
 
-        opt_idx = letters.index(choice)
-        selected_option = q.options[opt_idx]
-        answers[q.id] = selected_option.score
-        console.print(f"[dim]Recorded: {choice}[/]\n")
+            letters = ["A", "B", "C", "D", "E"]
+            valid_choices = letters[:len(q.options)]
+
+            for ltr, opt in zip(letters, q.options):
+                opt_text = (opt.text_tr if is_tr and opt.text_tr else opt.text)
+                console.print(f"  [bold cyan]({ltr})[/] {opt_text}")
+
+            console.print("")
+            choice = ""
+            select_prompt = f"Seçeneği belirleyin ({'/'.join(valid_choices)})" if is_tr else f"Select option ({'/'.join(valid_choices)})"
+            while choice not in valid_choices:
+                choice = Prompt.ask(
+                    f"[bold]{select_prompt}[/]",
+                    default="A",
+                    console=console,
+                ).strip().upper()
+
+            opt_idx = letters.index(choice)
+            selected_option = q.options[opt_idx]
+            answers[q.id] = selected_option.score
+            engine.record_answer(q, selected_option.score)
+            console.print(f"[dim]Recorded: {choice}[/]\n")
+
+            if quick:
+                break
 
     # Evaluate
     evaluator = SeniorityEvaluator(track=track)
     result = evaluator.evaluate_answers(
         answers=answers,
         candidate_name=name,
-        assessment_mode="rapid" if quick else "comprehensive_exam",
+        assessment_mode="rapid" if quick else "adaptive_exam",
     )
 
-    reporter = Reporter(result, console=console)
+    reporter = Reporter(result, console=console, lang=lang)
     reporter.print_terminal_summary()
 
     # Exports
     if export_html or open_browser:
-        target_html = export_html or f"seniormeter_report_{name.lower().replace(' ', '_')}.html"
+        target_html = export_html or f"devcaliber_report_{name.lower().replace(' ', '_')}.html"
         html_path = Path(target_html)
         html_path.parent.mkdir(parents=True, exist_ok=True)
         html_content = reporter.generate_html_dashboard()
@@ -150,13 +182,15 @@ def assess(
 def exam(
     name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
     track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
+    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' for English or 'tr' for Türkçe"),
     export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
     open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
 ):
-    """Run the 60-minute comprehensive 30-scenario seniority examination."""
+    """Run the 60-minute adaptive 30-scenario seniority examination."""
     assess(
         name=name,
         track=track,
+        lang=lang,
         quick=False,
         export_html=export_html,
         export_md=None,
@@ -170,6 +204,7 @@ def exam(
 def quick(
     name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
     track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
+    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' for English or 'tr' for Türkçe"),
     export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
     open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
 ):
@@ -177,6 +212,7 @@ def quick(
     assess(
         name=name,
         track=track,
+        lang=lang,
         quick=True,
         export_html=export_html,
         export_md=None,
@@ -193,7 +229,7 @@ def matrix(
 ):
     """Inspect the engineering career competency rubric table."""
     render_banner()
-    table = Table(title="SeniorMeter Engineering Competency Matrix", box=box.ROUNDED, expand=True)
+    table = Table(title="DevCaliber Engineering Competency Matrix", box=box.ROUNDED, expand=True)
     table.add_column("Dimension", style="bold cyan", width=22)
     table.add_column("Level", style="bold yellow", width=8)
     table.add_column("Expectations & Observable Behaviors", style="white")
@@ -273,7 +309,6 @@ def badge(
         console.print(f"[bold red]Error:[/] Unknown level '{level}'. Choose from L1, L2, L3, L4, L5.")
         raise typer.Exit(code=1)
 
-    # Mock assessment result for badge rendering
     evaluator = SeniorityEvaluator()
     dummy_answers = {q.id: float(target_level.tier) for q in QUESTIONS}
     result = evaluator.evaluate_answers(dummy_answers)
@@ -289,8 +324,8 @@ def badge(
 
 @app.command()
 def version():
-    """Show SeniorMeter version."""
-    console.print(f"[bold cyan]SeniorMeter[/] version [bold white]{__version__}[/]")
+    """Show DevCaliber version."""
+    console.print(f"[bold cyan]DevCaliber[/] version [bold white]{__version__}[/]")
 
 
 def main():

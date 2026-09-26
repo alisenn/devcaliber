@@ -5,7 +5,7 @@ Computes multi-dimensional competencies, industry benchmark percentiles, and gap
 
 from datetime import datetime
 from typing import Dict, List, Optional
-from seniormeter.models import (
+from devcaliber.models import (
     AssessmentResult,
     DimensionId,
     DimensionScore,
@@ -13,8 +13,9 @@ from seniormeter.models import (
     ActionItem,
     SeniorityLevel,
     Track,
+    Question,
 )
-from seniormeter.matrix import (
+from devcaliber.matrix import (
     DIMENSION_METADATA,
     GROWTH_ROADMAP,
     QUESTIONS,
@@ -205,3 +206,69 @@ class SeniorityEvaluator:
             )
 
         return recommendations
+
+
+class AdaptiveAssessmentEngine:
+    """
+    Computerized Adaptive Testing (CAT) Engine for Software Engineering Seniority.
+    Dynamically adjusts question difficulty on a step-by-step basis depending on the
+    candidate's answer to the immediate previous question.
+    """
+
+    def __init__(self, track: Track = Track.GENERAL, questions: Optional[List[Question]] = None):
+        self.track = track
+        self.questions = questions or QUESTIONS
+        self.answered: Dict[str, float] = {}
+        self.history: List[Dict[str, any]] = []
+        self.current_difficulty: int = 2  # Baseline starting difficulty
+
+    def record_answer(self, question: Question, score: float):
+        """Records an answer and logs it in the progression history."""
+        self.answered[question.id] = score
+        self.history.append({
+            "question_id": question.id,
+            "dimension": question.dimension,
+            "difficulty": question.difficulty,
+            "score": score,
+        })
+
+    def get_next_question(
+        self,
+        dimension: Optional[DimensionId] = None,
+        is_quick: bool = False,
+    ) -> Optional[tuple]:
+        """
+        Determines the next question based on the previous question's performance:
+        - If previous score >= 4.0: Difficulty scales UP (+1, max 5).
+        - If previous score <= 2.0: Difficulty scales DOWN (-1, min 1).
+        - If previous score between 2.1 and 3.9: Difficulty remains balanced.
+        Returns: (Question, adaptation_message) or None if no questions left.
+        """
+        candidates = [
+            q for q in self.questions
+            if q.id not in self.answered and (dimension is None or q.dimension == dimension) and (not is_quick or q.is_quick)
+        ]
+        if not candidates:
+            return None
+
+        # Check last answer to dynamically adjust difficulty
+        if not self.history:
+            self.current_difficulty = 2
+            adaptation_msg = "Initial Baseline Calibration (Difficulty: Tier 2 - Mid)"
+        else:
+            last_entry = self.history[-1]
+            last_score = last_entry["score"]
+
+            if last_score >= 4.0:
+                self.current_difficulty = min(5, self.current_difficulty + 1)
+                adaptation_msg = f"📈 Difficulty Increased to Tier {self.current_difficulty} (Previous answer demonstrated Staff+ competency)"
+            elif last_score <= 2.0:
+                self.current_difficulty = max(1, self.current_difficulty - 1)
+                adaptation_msg = f"📉 Difficulty Adjusted to Tier {self.current_difficulty} (Previous answer indicated foundational tier; probing baseline)"
+            else:
+                adaptation_msg = f"⚖️ Maintained at Tier {self.current_difficulty} (Previous answer showed solid Senior proficiency)"
+
+        # Sort available candidates by proximity to current adapted difficulty
+        candidates.sort(key=lambda q: (abs(q.difficulty - self.current_difficulty), -q.difficulty))
+        chosen = candidates[0]
+        return chosen, adaptation_msg

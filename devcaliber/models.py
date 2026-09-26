@@ -59,6 +59,7 @@ class Track(str, Enum):
 class QuestionOption(BaseModel):
     id: str
     text: str
+    text_tr: Optional[str] = None
     score: float
     description: Optional[str] = None
     level_indicator: SeniorityLevel
@@ -69,8 +70,13 @@ class Question(BaseModel):
     dimension: DimensionId
     title: str
     scenario: str
+    title_tr: Optional[str] = None
+    scenario_tr: Optional[str] = None
     options: List[QuestionOption]
     is_quick: bool = False
+    difficulty: int = 3  # 1 (Junior) to 5 (Principal/Staff)
+    question_type: str = "scenario"  # "scenario", "system_design", "architecture_tradeoff"
+    interview_source: Optional[str] = None
     track: Track = Track.GENERAL
 
 

@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "seniormeter"
+name = "devcaliber"
 version = "2.0.0"
 description = "The Open Source Engineering Seniority & Career Matrix Diagnostic Engine for Software Engineers"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [
-    { name = "SeniorMeter Contributors" }
+    { name = "DevCaliber Contributors" }
 ]
 keywords = [
     "career",
@@ -20,6 +20,7 @@ keywords = [
     "competency-matrix",
     "career-ladder",
     "skills-assessment",
+    "system-design",
     "cli"
 ]
 classifiers = [
@@ -51,20 +52,21 @@ dev = [
 ]
 
 [project.scripts]
-seniormeter = "seniormeter.cli:main"
-levelcraft = "seniormeter.cli:main"
+devcaliber = "devcaliber.cli:main"
+seniormeter = "devcaliber.cli:main"
+levelcraft = "devcaliber.cli:main"
 
 [project.urls]
-Homepage = "https://seniormeter.com"
-Repository = "https://github.com/alisenn/levelcraft"
-Issues = "https://github.com/alisenn/levelcraft/issues"
+Homepage = "https://alisenn.github.io/devcaliber/"
+Repository = "https://github.com/alisenn/devcaliber"
+Issues = "https://github.com/alisenn/devcaliber/issues"
 
 [tool.setuptools.packages.find]
-include = ["seniormeter*"]
+include = ["devcaliber*"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-ra -q --cov=seniormeter"
+addopts = "-ra -q --cov=devcaliber"
 testpaths = [
     "tests"
 ]

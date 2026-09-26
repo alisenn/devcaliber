@@ -3,7 +3,7 @@ CLI command tests using Typer CliRunner for SeniorMeter.
 """
 
 from typer.testing import CliRunner
-from seniormeter.cli import app
+from devcaliber.cli import app
 
 runner = CliRunner()
 
@@ -11,13 +11,13 @@ runner = CliRunner()
 def test_cli_version():
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
-    assert "SeniorMeter version" in result.stdout
+    assert "DevCaliber version" in result.stdout
 
 
 def test_cli_matrix():
     result = runner.invoke(app, ["matrix"])
     assert result.exit_code == 0
-    assert "SeniorMeter Engineering Competency Matrix" in result.stdout
+    assert "Engineering Competency Matrix" in result.stdout
     assert "Craft" in result.stdout
     assert "Architecture" in result.stdout
 

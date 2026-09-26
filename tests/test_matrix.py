@@ -2,8 +2,8 @@
 Unit tests for competency matrix and question bank.
 """
 
-from seniormeter.models import DimensionId, SeniorityLevel
-from seniormeter.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS, GROWTH_ROADMAP
+from devcaliber.models import DimensionId, SeniorityLevel
+from devcaliber.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS, GROWTH_ROADMAP
 
 
 def test_matrix_covers_all_dimensions():

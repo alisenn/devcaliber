@@ -12,8 +12,8 @@ from rich.progress_bar import ProgressBar
 from rich.text import Text
 from rich import box
 
-from seniormeter.models import AssessmentResult, DimensionId, SeniorityLevel
-from seniormeter.matrix import DIMENSION_METADATA
+from devcaliber.models import AssessmentResult, DimensionId, SeniorityLevel
+from devcaliber.matrix import DIMENSION_METADATA
 
 
 LEVEL_COLORS: Dict[str, str] = {
@@ -28,9 +28,10 @@ LEVEL_COLORS: Dict[str, str] = {
 class Reporter:
     """Renders assessment reports in multiple interactive and static formats."""
 
-    def __init__(self, result: AssessmentResult, console: Optional[Console] = None):
+    def __init__(self, result: AssessmentResult, console: Optional[Console] = None, lang: str = "en"):
         self.result = result
         self.console = console or Console()
+        self.lang = lang
 
     def print_terminal_summary(self):
         """Prints a stunning, color-rich scorecard to the terminal."""
@@ -40,7 +41,7 @@ class Reporter:
 
         # Top banner
         header_text = Text()
-        header_text.append(" LEVELCRAFT SENIORITY BENCHMARK REPORT \n", style="bold white on dark_blue")
+        header_text.append(" DEVCALIBER ENGINEERING SENIORITY BENCHMARK REPORT \n", style="bold white on dark_blue")
         header_text.append(f"\nCandidate: {self.result.candidate_name}  |  Track: {self.result.track.value.upper()}\n", style="bold")
         header_text.append(f"Assessment Mode: {self.result.assessment_mode} ({self.result.total_questions} scenarios evaluated)\n", style="dim")
         self.console.print(Panel(header_text, border_style="blue", box=box.ROUNDED))

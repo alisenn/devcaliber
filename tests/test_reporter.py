@@ -5,10 +5,10 @@ Unit tests for Reporter outputs (Markdown, JSON, HTML, SVG badge).
 from io import StringIO
 from rich.console import Console
 
-from seniormeter.models import Track
-from seniormeter.evaluator import SeniorityEvaluator
-from seniormeter.reporter import Reporter
-from seniormeter.matrix import QUESTIONS
+from devcaliber.models import Track
+from devcaliber.evaluator import SeniorityEvaluator
+from devcaliber.reporter import Reporter
+from devcaliber.matrix import QUESTIONS
 
 
 def get_sample_result():

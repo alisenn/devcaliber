@@ -1,10 +1,10 @@
 """
-Unit tests for the seniority evaluator engine.
+Unit tests for the DevCaliber seniority evaluator and adaptive CAT engine.
 """
 
-from seniormeter.models import SeniorityLevel, DimensionId, Track
-from seniormeter.evaluator import SeniorityEvaluator
-from seniormeter.matrix import QUESTIONS
+from devcaliber.models import SeniorityLevel, DimensionId, Track
+from devcaliber.evaluator import SeniorityEvaluator, AdaptiveAssessmentEngine
+from devcaliber.matrix import QUESTIONS
 
 
 def test_evaluator_all_junior_answers():
@@ -54,3 +54,35 @@ def test_track_weighting_difference():
     lead_res = lead_eval.evaluate_answers(skewed_answers)
 
     assert lead_res.overall_score > backend_res.overall_score
+
+
+def test_adaptive_engine_difficulty_scaling_up():
+    engine = AdaptiveAssessmentEngine()
+
+    # Initial question
+    q1, msg1 = engine.get_next_question(dimension=DimensionId.CRAFT)
+    assert q1 is not None
+    assert "Initial" in msg1
+
+    # Candidate provides Staff/Principal answer (score 5.0)
+    engine.record_answer(q1, 5.0)
+
+    # Next question should adapt UP in difficulty
+    q2, msg2 = engine.get_next_question(dimension=DimensionId.CRAFT)
+    assert q2 is not None
+    assert "Increased" in msg2
+    assert q2.difficulty >= q1.difficulty
+
+
+def test_adaptive_engine_difficulty_scaling_down():
+    engine = AdaptiveAssessmentEngine()
+
+    q1, _ = engine.get_next_question(dimension=DimensionId.CRAFT)
+    # Candidate provides Junior answer (score 1.0)
+    engine.record_answer(q1, 1.0)
+
+    # Next question should adapt DOWN in difficulty
+    q2, msg2 = engine.get_next_question(dimension=DimensionId.CRAFT)
+    assert q2 is not None
+    assert "Adjusted" in msg2
+    assert engine.current_difficulty <= 2

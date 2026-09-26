@@ -2,7 +2,7 @@
 Unit tests for SeniorMeter models and schemas.
 """
 
-from seniormeter.models import SeniorityLevel, DimensionId, Track
+from devcaliber.models import SeniorityLevel, DimensionId, Track
 
 
 def test_seniority_level_properties():
