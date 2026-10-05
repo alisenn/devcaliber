@@ -14,6 +14,11 @@ from rich import box
 
 from devcaliber.models import AssessmentResult, DimensionId, SeniorityLevel
 from devcaliber.matrix import DIMENSION_METADATA
+from devcaliber.evaluator import SeniorityEvaluator
+
+
+def _overall_percentile(score: float) -> int:
+    return SeniorityEvaluator.calculate_percentile(score)
 
 
 LEVEL_COLORS: Dict[str, str] = {
@@ -43,7 +48,7 @@ class Reporter:
         header_text = Text()
         header_text.append(" DEVCALIBER ENGINEERING SENIORITY BENCHMARK REPORT \n", style="bold white on dark_blue")
         header_text.append(f"\nCandidate: {self.result.candidate_name}  |  Track: {self.result.track.value.upper()}\n", style="bold")
-        header_text.append(f"Assessment Mode: {self.result.assessment_mode} ({self.result.total_questions} scenarios evaluated)\n", style="dim")
+        header_text.append(f"Assessment Mode: {self.result.assessment_mode} ({self.result.total_questions} scenarios evaluated, {self.result.confidence} confidence)\n", style="dim")
         self.console.print(Panel(header_text, border_style="blue", box=box.ROUNDED))
 
         # Overall Level Card
@@ -51,7 +56,7 @@ class Reporter:
             f"[bold {color}]Seniority Tier: {lvl_code}[/]\n"
             f"[bold white]{lvl_title}[/]\n\n"
             f"Overall Score: [bold]{self.result.overall_score:.2f} / 5.00[/]\n"
-            f"Global Percentile: [bold {color}]Top {100 - int(self.result.overall_score * 19)}%[/] (Industry benchmark)"
+            f"Estimated Percentile: [bold {color}]~Top {100 - _overall_percentile(self.result.overall_score)}%[/] [dim](rough estimate, not measured data)[/]"
         )
         self.console.print(Panel(card_content, title="[bold]Overall Placement[/]", border_style=color, box=box.DOUBLE))
 
@@ -61,7 +66,7 @@ class Reporter:
         table.add_column("Score", justify="center", width=8)
         table.add_column("Level", justify="center", width=10)
         table.add_column("Visual Benchmark", width=28)
-        table.add_column("Percentile", justify="right", width=12)
+        table.add_column("Est. Pctl", justify="right", width=12)
 
         for dim_id, dscore in self.result.dimension_scores.items():
             meta = DIMENSION_METADATA.get(dim_id, {"name": dim_id.value, "icon": "•"})
@@ -80,6 +85,9 @@ class Reporter:
             )
 
         self.console.print(table)
+
+        for note in self.result.notes:
+            self.console.print(f"[yellow]⚠ {note}[/]")
 
         # Gap Analysis / Next Steps
         gap_panel_content = Text()
@@ -107,18 +115,24 @@ class Reporter:
             f"**Assessed At:** {r.timestamp}  ",
             f"**Overall Level:** **`{lvl_code}` - {lvl_title}**  ",
             f"**Composite Score:** `{r.overall_score:.2f} / 5.00`  ",
+            f"**Mode:** {r.assessment_mode} ({r.total_questions} questions, {r.confidence} confidence)  ",
             f"",
             f"---",
             f"",
             f"## 📊 Competency Radar Breakdown",
             f"",
-            f"| Dimension | Score | Seniority Tier | Industry Percentile |",
+            f"| Dimension | Score | Seniority Tier | Est. Percentile* |",
             f"| :--- | :---: | :---: | :---: |",
         ]
 
         for dim_id, dscore in r.dimension_scores.items():
             meta = DIMENSION_METADATA.get(dim_id, {"name": dim_id.value, "icon": ""})
-            md.append(f"| {meta.get('icon', '')} {meta['name']} | `{dscore.score:.2f}` | **{dscore.level.code}** | `Top {100 - dscore.percentile}%` |")
+            md.append(f"| {meta.get('icon', '')} {meta['name']} | `{dscore.score:.2f}` | **{dscore.level.code}** | `~Top {100 - dscore.percentile}%` |")
+
+        md.append("")
+        md.append("*\\* Percentiles are rough estimates from a hand-tuned curve, not measured from real test-takers.*")
+        for note in r.notes:
+            md.append(f"> ⚠️ {note}")
 
         md.extend([
             f"",
@@ -198,7 +212,7 @@ class Reporter:
                     <span class="text-3xl font-extrabold text-white">{dscore.score:.2f}</span>
                     <span class="text-slate-400 text-sm">/ 5.00</span>
                 </div>
-                <div class="mt-2 text-xs text-emerald-400 font-medium">Percentile: Top {100 - dscore.percentile}%</div>
+                <div class="mt-2 text-xs text-emerald-400 font-medium">Est. percentile: ~Top {100 - dscore.percentile}%</div>
                 <div class="w-full bg-slate-700/60 rounded-full h-2 mt-3">
                     <div class="bg-gradient-to-r from-sky-400 to-indigo-500 h-2 rounded-full" style="width: {(dscore.score / 5.0) * 100}%"></div>
                 </div>
@@ -268,8 +282,8 @@ class Reporter:
                         <div class="text-2xl font-bold text-sky-400 mt-1">{self.result.overall_score:.2f} <span class="text-xs text-slate-500">/ 5.0</span></div>
                     </div>
                     <div>
-                        <div class="text-xs text-slate-400 uppercase font-semibold">Benchmark Percentile</div>
-                        <div class="text-2xl font-bold text-emerald-400 mt-1">Top {100 - int(self.result.overall_score * 19)}%</div>
+                        <div class="text-xs text-slate-400 uppercase font-semibold">Estimated Percentile*</div>
+                        <div class="text-2xl font-bold text-emerald-400 mt-1">~Top {100 - _overall_percentile(self.result.overall_score)}%</div>
                     </div>
                 </div>
             </div>

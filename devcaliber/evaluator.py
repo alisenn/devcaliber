@@ -70,8 +70,11 @@ class SeniorityEvaluator:
 
     @staticmethod
     def calculate_percentile(score: float) -> int:
-        """Map a score (1.0 - 5.0) to an industry percentile distribution."""
-        # Empirical CDF curve calibrated to tech industry demographics
+        """Map a score (1.0 - 5.0) to an *estimated* percentile.
+
+        NOTE: this is a hand-tuned curve, not calibrated against collected response
+        data. Treat it as a rough indication only.
+        """
         # L1 (1.0-1.8): 5-25th percentile
         # L2 (1.8-2.8): 25-60th percentile
         # L3 (2.8-3.8): 60-85th percentile
@@ -144,6 +147,7 @@ class SeniorityEvaluator:
             )
 
         overall_score = round(weighted_sum / (total_weight or 1.0), 2)
+        confidence, notes = self._assess_reliability(dim_scores_accumulator)
         overall_level = SeniorityLevel.from_score(overall_score)
 
         # Generate Gap Analysis & Roadmap to next level
@@ -159,7 +163,34 @@ class SeniorityEvaluator:
             gap_recommendations=gap_recommendations,
             timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             assessment_mode=assessment_mode,
+            confidence=confidence,
+            notes=notes,
         )
+
+    @staticmethod
+    def _assess_reliability(
+        per_dim: Dict[DimensionId, List[float]],
+    ) -> tuple:
+        """Derive result confidence and calibration notes from the raw answers."""
+        counts = [len(v) for v in per_dim.values()]
+        min_n = min(counts)
+        confidence = "low" if min_n <= 1 else "medium" if min_n <= 4 else "high"
+
+        notes: List[str] = []
+        all_scores = [s for v in per_dim.values() for s in v]
+        if len(all_scores) >= 10 and all(s >= 4.5 for s in all_scores):
+            notes.append(
+                "Every answer was top-tier. Self-assessment tends to run high; "
+                "validate with peer or manager feedback."
+            )
+        for dim_id, scores in per_dim.items():
+            if len(scores) >= 3 and max(scores) - min(scores) >= 3.0:
+                name = DIMENSION_METADATA[dim_id]["name"]
+                notes.append(
+                    f"{name}: answers were inconsistent (range {min(scores):.1f}-{max(scores):.1f}); "
+                    "the dimension score is less reliable."
+                )
+        return confidence, notes
 
     def _generate_gap_roadmap(
         self,

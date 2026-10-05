@@ -86,3 +86,26 @@ def test_adaptive_engine_difficulty_scaling_down():
     assert q2 is not None
     assert "Adjusted" in msg2
     assert engine.current_difficulty <= 2
+
+
+def test_confidence_scales_with_questions_per_dimension():
+    evaluator = SeniorityEvaluator()
+    pulse = {q.id: 3.0 for q in QUESTIONS if q.is_quick}
+    sprint = {q.id: 3.0 for q in QUESTIONS if q.sprint}
+    assert evaluator.evaluate_answers(pulse).confidence == "low"
+    assert evaluator.evaluate_answers(sprint).confidence == "medium"
+    assert evaluator.evaluate_answers({q.id: 3.0 for q in QUESTIONS}).confidence == "high"
+
+
+def test_all_top_answers_trigger_calibration_note():
+    result = SeniorityEvaluator().evaluate_answers({q.id: 5.0 for q in QUESTIONS})
+    assert any("top-tier" in n for n in result.notes)
+
+
+def test_inconsistent_dimension_is_flagged():
+    answers = {q.id: 3.0 for q in QUESTIONS}
+    craft = [q for q in QUESTIONS if q.dimension == DimensionId.CRAFT]
+    answers[craft[0].id] = 1.0
+    answers[craft[1].id] = 4.5
+    result = SeniorityEvaluator().evaluate_answers(answers)
+    assert any("inconsistent" in n for n in result.notes)

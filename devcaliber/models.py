@@ -73,7 +73,8 @@ class Question(BaseModel):
     title_tr: Optional[str] = None
     scenario_tr: Optional[str] = None
     options: List[QuestionOption]
-    is_quick: bool = False
+    is_quick: bool = False  # part of the 5-question pulse check
+    sprint: bool = False  # part of the 30-minute sprint assessment
     difficulty: int = 3  # 1 (Junior) to 5 (Principal/Staff)
     question_type: str = "scenario"  # "scenario", "system_design", "architecture_tradeoff"
     interview_source: Optional[str] = None
@@ -114,3 +115,5 @@ class AssessmentResult(BaseModel):
     gap_recommendations: List[GapRecommendation]
     timestamp: str
     assessment_mode: str = "interactive"
+    confidence: str = "medium"  # low | medium | high, based on questions per dimension
+    notes: List[str] = Field(default_factory=list)  # consistency / calibration warnings

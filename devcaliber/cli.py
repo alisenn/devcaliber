@@ -4,7 +4,7 @@ Features real-time step-by-step difficulty adaptation, FAANG/Glassdoor real inte
 and English / Turkish dual language support.
 """
 
-import sys
+import random
 import webbrowser
 from pathlib import Path
 from typing import Optional
@@ -19,6 +19,13 @@ from rich import box
 from devcaliber import __version__
 from devcaliber.models import SeniorityLevel, DimensionId, Track
 from devcaliber.matrix import DIMENSION_METADATA, LEVEL_RUBRIC, QUESTIONS
+from devcaliber.modes import MODES
+from devcaliber.history import (
+    diff_dimensions,
+    load_history,
+    previous_entry,
+    save_result,
+)
 from devcaliber.evaluator import SeniorityEvaluator, AdaptiveAssessmentEngine
 from devcaliber.reporter import Reporter, LEVEL_COLORS
 
@@ -43,12 +50,27 @@ def render_banner():
     console.print(banner)
 
 
+def _print_progress(result, previous, is_tr: bool) -> None:
+    deltas = diff_dimensions(result, previous)
+    title = "Önceki sonuca göre ilerleme" if is_tr else "Progress since last attempt"
+    overall = round(result.overall_score - previous.get("overall_score", result.overall_score), 2)
+    label = "Genel" if is_tr else "Overall"
+    lines = [f"{label}: {previous.get('overall_score')} -> {result.overall_score} ({overall:+.2f}) [{previous.get('timestamp', '')}]"]
+    for dim_id, delta in deltas.items():
+        name = DIMENSION_METADATA[DimensionId(dim_id)]["name"]
+        color = "green" if delta > 0 else "red" if delta < 0 else "dim"
+        lines.append(f"  [{color}]{delta:+.2f}[/]  {name}")
+    console.print(Panel("\n".join(lines), title=title, border_style="green", box=box.ROUNDED))
+
+
 @app.command()
 def assess(
     name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
     track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track (general, backend, frontend, devops, tech_lead)"),
     lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' for English or 'tr' for Türkçe (Teknik terimler korunur)"),
-    quick: bool = typer.Option(False, "--quick", "-q", help="Run 5-question rapid pulse check"),
+    quick: bool = typer.Option(False, "--quick", "-q", help="Shortcut for --mode pulse"),
+    mode: str = typer.Option("sprint", "--mode", "-m", help="pulse (5 min), sprint (30 min) or deep (2 hours)"),
+    no_history: bool = typer.Option(False, "--no-history", help="Do not save this result to local history"),
     export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML dashboard report"),
     export_md: Optional[str] = typer.Option(None, "--md", help="Path to save Markdown report"),
     export_json: Optional[str] = typer.Option(None, "--json", help="Path to save JSON report"),
@@ -59,22 +81,30 @@ def assess(
     render_banner()
     is_tr = lang.lower().startswith("tr")
 
+    mode = "pulse" if quick else mode.lower()
+    if mode not in MODES:
+        console.print(f"[bold red]Error:[/] Unknown mode '{mode}'. Choose from: {', '.join(MODES)}.")
+        raise typer.Exit(code=1)
+    mode_cfg = MODES[mode]
+    pool = mode_cfg.pool(QUESTIONS)
+
     if is_tr:
-        mode_label = "5 Soruluk Hızlı Pulse Check" if quick else f"Kapsamlı {len(QUESTIONS)} Soruluk Adaptif Tanı Sınavı"
+        mode_label = f"{mode_cfg.label_tr} (~{mode_cfg.minutes} dk, {len(pool)} soru)"
         console.print(f"[bold][cyan]{name}[/] için Kıdem Değerlendirmesi Başlatılıyor (Track: [green]{track.value.upper()}[/])[/]")
         console.print(f"[dim]Mod: {mode_label}. Her senaryoyu prodüksiyondaki doğal refleksi yansıtacak şekilde yanıtlayın.[/dim]")
         console.print("[italic dim]⚡ Sınav bir önceki soruya verdiğiniz cevabın yetkinliğine göre zorlaşır veya kolaylaşır.[/italic dim]\n")
     else:
-        mode_label = "5-Question Rapid Pulse" if quick else f"Comprehensive {len(QUESTIONS)}-Question Adaptive Exam"
+        mode_label = f"{mode_cfg.label} (~{mode_cfg.minutes} min, {len(pool)} questions)"
         console.print(f"[bold]Starting Seniority Assessment for [cyan]{name}[/] (Track: [green]{track.value.upper()}[/])[/]")
         console.print(f"[dim]Mode: {mode_label}. Answer each scenario reflecting your natural behavior in production.[/dim]")
         console.print("[italic dim]⚡ Questions adaptively scale up or down based on your previous answer's competency.[/italic dim]\n")
 
-    engine = AdaptiveAssessmentEngine(track=track, questions=QUESTIONS)
+    engine = AdaptiveAssessmentEngine(track=track, questions=pool)
     dimensions = list(DimensionId)
     answers = {}
     q_index = 0
-    total_to_ask = 5 if quick else len(QUESTIONS)
+    total_to_ask = len(pool)
+    rng = random.Random()
 
     for stage_idx, dim in enumerate(dimensions, start=1):
         dim_info = DIMENSION_METADATA.get(dim, {})
@@ -82,7 +112,7 @@ def assess(
         console.print(f"\n[bold yellow]━━━ {stage_label}: {dim_info.get('name', 'Pillar').upper()} ━━━[/]")
 
         while True:
-            adaptive_result = engine.get_next_question(dimension=dim, is_quick=quick)
+            adaptive_result = engine.get_next_question(dimension=dim)
             if not adaptive_result:
                 break
 
@@ -109,9 +139,12 @@ def assess(
             ))
 
             letters = ["A", "B", "C", "D", "E"]
-            valid_choices = letters[:len(q.options)]
+            # Shuffle so option position never hints at seniority.
+            shuffled = q.options[:]
+            rng.shuffle(shuffled)
+            valid_choices = letters[:len(shuffled)]
 
-            for ltr, opt in zip(letters, q.options):
+            for ltr, opt in zip(letters, shuffled):
                 opt_text = (opt.text_tr if is_tr and opt.text_tr else opt.text)
                 console.print(f"  [bold cyan]({ltr})[/] {opt_text}")
 
@@ -126,12 +159,12 @@ def assess(
                 ).strip().upper()
 
             opt_idx = letters.index(choice)
-            selected_option = q.options[opt_idx]
+            selected_option = shuffled[opt_idx]
             answers[q.id] = selected_option.score
             engine.record_answer(q, selected_option.score)
             console.print(f"[dim]Recorded: {choice}[/]\n")
 
-            if quick:
+            if mode == "pulse":
                 break
 
     # Evaluate
@@ -139,11 +172,17 @@ def assess(
     result = evaluator.evaluate_answers(
         answers=answers,
         candidate_name=name,
-        assessment_mode="rapid" if quick else "adaptive_exam",
+        assessment_mode=mode,
     )
 
     reporter = Reporter(result, console=console, lang=lang)
     reporter.print_terminal_summary()
+
+    previous = previous_entry(result)
+    if previous:
+        _print_progress(result, previous, is_tr)
+    if not no_history:
+        save_result(result)
 
     # Exports
     if export_html or open_browser:
@@ -178,48 +217,86 @@ def assess(
         console.print(f"[bold green]✓[/] SVG GitHub Badge saved to: [underline]{badge}[/]")
 
 
-@app.command()
-def exam(
-    name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
-    track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
-    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' for English or 'tr' for Türkçe"),
-    export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
-    open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
-):
-    """Run the 60-minute adaptive 30-scenario seniority examination."""
+def _mode_command(mode: str, name, track, lang, export_html, open_browser):
     assess(
         name=name,
         track=track,
         lang=lang,
         quick=False,
+        mode=mode,
+        no_history=False,
         export_html=export_html,
         export_md=None,
         export_json=None,
         badge=None,
         open_browser=open_browser,
     )
+
+
+@app.command()
+def sprint(
+    name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
+    track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
+    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' or 'tr'"),
+    export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
+    open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
+):
+    """30-minute sprint assessment (15 adaptive scenarios, medium confidence)."""
+    _mode_command("sprint", name, track, lang, export_html, open_browser)
+
+
+@app.command()
+def deep(
+    name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
+    track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
+    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' or 'tr'"),
+    export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
+    open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
+):
+    """2-hour deep assessment (full question bank, high confidence)."""
+    _mode_command("deep", name, track, lang, export_html, open_browser)
+
+
+@app.command()
+def exam(
+    name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
+    track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
+    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' or 'tr'"),
+    export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
+    open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
+):
+    """Alias for `deep` (kept for backwards compatibility)."""
+    _mode_command("deep", name, track, lang, export_html, open_browser)
 
 
 @app.command()
 def quick(
     name: str = typer.Option("Engineer", "--name", "-n", help="Candidate name"),
     track: Track = typer.Option(Track.GENERAL, "--track", "-t", help="Engineering track"),
-    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' for English or 'tr' for Türkçe"),
+    lang: str = typer.Option("en", "--lang", "-l", help="Language: 'en' or 'tr'"),
     export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
     open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
 ):
-    """Run a rapid 3-minute seniority benchmark (5 core questions)."""
-    assess(
-        name=name,
-        track=track,
-        lang=lang,
-        quick=True,
-        export_html=export_html,
-        export_md=None,
-        export_json=None,
-        badge=None,
-        open_browser=open_browser,
-    )
+    """5-minute pulse check (5 core questions, low confidence)."""
+    _mode_command("pulse", name, track, lang, export_html, open_browser)
+
+
+@app.command()
+def history():
+    """Show your saved assessment history."""
+    entries = load_history()
+    if not entries:
+        console.print("[dim]No saved results yet. Run `devcaliber sprint` first.[/dim]")
+        return
+    table = Table(title="Assessment History", box=box.ROUNDED)
+    for col in ("Date", "Name", "Track", "Mode", "Level", "Score", "Confidence"):
+        table.add_column(col)
+    for e in entries:
+        table.add_row(
+            e.get("timestamp", ""), e.get("name", ""), e.get("track", ""), e.get("mode", ""),
+            e.get("level", ""), str(e.get("overall_score", "")), e.get("confidence", ""),
+        )
+    console.print(table)
 
 
 @app.command()

@@ -78,3 +78,22 @@ def test_cli_assess_quick(tmp_path):
     assert md_file.exists()
     assert json_file.exists()
     assert badge_file.exists()
+
+
+def test_cli_sprint_runs_end_to_end(tmp_path, monkeypatch):
+    monkeypatch.setenv("DEVCALIBER_HOME", str(tmp_path))
+    result = runner.invoke(app, ["sprint", "--name", "Ada"], input="A\n" * 15)
+    assert result.exit_code == 0, result.stdout
+    assert "Sprint Assessment" in result.stdout
+    assert "(15/15)" in result.stdout
+
+    history = runner.invoke(app, ["history"])
+    assert history.exit_code == 0
+    assert "Ada" in history.stdout
+
+
+def test_cli_invalid_mode(tmp_path, monkeypatch):
+    monkeypatch.setenv("DEVCALIBER_HOME", str(tmp_path))
+    result = runner.invoke(app, ["assess", "--mode", "marathon"])
+    assert result.exit_code == 1
+    assert "Unknown mode" in result.stdout

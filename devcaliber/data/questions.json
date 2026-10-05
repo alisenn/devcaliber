@@ -1,340 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevCaliber — Open Source Engineering Seniority & Career Matrix Benchmark</title>
-    <meta name="description" content="Computerized Adaptive Testing (CAT) benchmark for software engineering seniority. Real FAANG & Glassdoor interview scenarios across Craft, Reliability, Impact, Leadership, and Autonomy.">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        code, pre { font-family: 'JetBrains Mono', monospace; }
-        .gradient-text {
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-sky-500 selection:text-white">
-
-    <!-- Top Navigation -->
-    <nav class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl">🧭</span>
-                <span class="font-extrabold text-xl tracking-tight gradient-text">DevCaliber</span>
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">v2.0.0</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <!-- Exam Timer Badge -->
-                <div id="examTimerBadge" class="hidden flex items-center gap-2 bg-slate-900 border border-slate-700/80 px-3 py-1 rounded-full text-xs font-mono font-bold text-amber-400">
-                    <span>⏱️</span>
-                    <span id="examTimer">60:00</span>
-                </div>
-
-                <!-- Language Switcher Toggle -->
-                <button onclick="toggleLanguage()" id="langToggleBtn" class="flex items-center gap-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 border border-slate-700/80 px-3 py-1.5 rounded-lg text-slate-200 transition-all shadow-sm">
-                    <span id="langFlag">🇹🇷</span>
-                    <span id="langLabel">Türkçe'ye Geç</span>
-                </button>
-
-                <!-- GitHub Star Link -->
-                <a href="https://github.com/alisenn/devcaliber" target="_blank" class="flex items-center gap-2 text-xs font-medium text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-700/80 px-3.5 py-1.5 rounded-lg transition-all shadow-sm">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                    <span>GitHub</span>
-                    <span class="text-amber-400 font-bold ml-0.5">★ Star</span>
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Container -->
-    <main class="max-w-4xl mx-auto px-4 py-12">
-
-        <!-- INTRO SCREEN -->
-        <div id="introScreen" class="text-center">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-300 border border-sky-500/20 mb-6">
-                <span id="introBadge">🎯 Computerized Adaptive Testing (CAT) Seniority Diagnostic Engine</span>
-            </div>
-            <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white leading-tight">
-                <span id="heroTitle1">Benchmark Your True</span> <br><span class="gradient-text" id="heroTitle2">Engineering Seniority</span>
-            </h1>
-            <p class="mt-4 text-base md:text-lg text-slate-400 max-w-2xl mx-auto" id="heroSubtitle">
-                Real FAANG & Glassdoor system design and architecture scenarios. Difficulty adapts after each question based on your immediate previous response.
-            </p>
-
-            <!-- Assessment Config Form -->
-            <div class="mt-10 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 md:p-8 max-w-xl mx-auto text-left shadow-2xl">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2" id="labelCandidate">Candidate Name or GitHub Handle</label>
-                        <input type="text" id="candidateName" placeholder="e.g. Linus Torvalds" value="Software Engineer" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2" id="labelTrack">Engineering Track</label>
-                        <select id="candidateTrack" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 text-sm">
-                            <option value="general">General Software Engineer</option>
-                            <option value="backend">Backend & Distributed Systems</option>
-                            <option value="frontend">Frontend & Web Platform</option>
-                            <option value="devops">DevOps & Cloud Infrastructure</option>
-                            <option value="tech_lead">Tech Lead / Engineering Management</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2" id="labelMode">Examination Mode</label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <label class="border border-slate-800 bg-slate-950/60 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-950/30 rounded-xl p-3.5 cursor-pointer flex flex-col items-start gap-1 relative">
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" name="evalMode" value="sprint" checked class="text-sky-500 focus:ring-0">
-                                    <span class="text-xs font-bold text-white" id="modeSprintTitle">⚡ 30-Min Sprint</span>
-                                </div>
-                                <span class="text-[11px] text-slate-400 pl-5" id="modeSprintDesc">15 adaptive scenarios · medium confidence</span>
-                                <span class="absolute top-2 right-2 text-[9px] font-bold bg-sky-500 text-slate-950 px-1.5 py-0.5 rounded" id="modeSprintTag">RECOMMENDED</span>
-                            </label>
-                            <label class="border border-slate-800 bg-slate-950/60 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-950/30 rounded-xl p-3.5 cursor-pointer flex flex-col items-start gap-1">
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" name="evalMode" value="deep" class="text-sky-500 focus:ring-0">
-                                    <span class="text-xs font-bold text-white" id="modeDeepTitle">🎓 2-Hour Deep Dive</span>
-                                </div>
-                                <span class="text-[11px] text-slate-400 pl-5" id="modeDeepDesc">60 adaptive scenarios · high confidence</span>
-                            </label>
-                            <label class="border border-slate-800 bg-slate-950/60 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-950/30 rounded-xl p-3.5 cursor-pointer flex flex-col items-start gap-1">
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" name="evalMode" value="pulse" class="text-sky-500 focus:ring-0">
-                                    <span class="text-xs font-bold text-white" id="modePulseTitle">🔎 5-Min Pulse</span>
-                                </div>
-                                <span class="text-[11px] text-slate-400 pl-5" id="modePulseDesc">5 scenarios · low confidence</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <button onclick="startAssessment()" class="mt-6 w-full bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-500 hover:from-sky-400 hover:to-purple-400 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-sky-500/25 flex items-center justify-center gap-2">
-                    <span id="btnStartText">Begin Adaptive Seniority Examination</span>
-                    <span>→</span>
-                </button>
-                <p class="text-center text-xs text-slate-500 mt-3" id="introFooter">Free & Open Source • Zero Tracking • 100% Client-Side Computation</p>
-            </div>
-
-            <!-- Global Leveling Framework Explainer Card -->
-            <div class="mt-12 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 text-left max-w-3xl mx-auto">
-                <div class="flex items-center gap-2.5 mb-3">
-                    <span class="text-xl">🌐</span>
-                    <h3 class="font-bold text-white text-sm" id="levelingGuideTitle">Global Industry Leveling Standard Mapping</h3>
-                </div>
-                <p class="text-xs text-slate-400 mb-4" id="levelingGuideDesc">
-                    How DevCaliber's L1–L5 standard correlates across global Big Tech ladders and Levels.fyi:
-                </p>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border border-slate-800 rounded-lg">
-                        <thead class="bg-slate-950 text-slate-300 font-semibold border-b border-slate-800">
-                            <tr>
-                                <th class="p-2.5">DevCaliber</th>
-                                <th class="p-2.5">Google</th>
-                                <th class="p-2.5">Meta</th>
-                                <th class="p-2.5">Amazon</th>
-                                <th class="p-2.5">Levels.fyi Standard</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800/70 text-slate-400 font-mono text-[11px]">
-                            <tr><td class="p-2.5 font-bold text-sky-400">L1 Junior</td><td>L3 (SWE II)</td><td>E3 (SWE)</td><td>SDE I</td><td>Entry-Level Engineer</td></tr>
-                            <tr><td class="p-2.5 font-bold text-indigo-400">L2 Mid</td><td>L4 (SWE III)</td><td>E4 (SWE)</td><td>SDE II</td><td>Mid-Level Software Engineer</td></tr>
-                            <tr><td class="p-2.5 font-bold text-purple-400">L3 Senior</td><td>L5 (Senior SWE)</td><td>E5 (Senior)</td><td>SDE III / Senior</td><td>Career Level Senior SWE</td></tr>
-                            <tr><td class="p-2.5 font-bold text-amber-400">L4 Staff</td><td>L6 (Staff SWE)</td><td>E6 (Staff)</td><td>Principal SDE</td><td>Staff Engineer / Force Multiplier</td></tr>
-                            <tr><td class="p-2.5 font-bold text-rose-400">L5 Principal</td><td>L7+ (Senior Staff/Principal)</td><td>E7+ (Senior Staff)</td><td>Senior Principal</td><td>Principal / VP Tech Fellow</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- QUESTION SCREEN -->
-        <div id="questionScreen" class="hidden">
-            <!-- Stage Header -->
-            <div class="mb-4 flex items-center justify-between">
-                <div>
-                    <span id="stageBadge" class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">
-                        STAGE 1 OF 5
-                    </span>
-                    <div class="flex items-center gap-2 mt-2">
-                        <span id="qDimIcon" class="text-2xl">⚡</span>
-                        <h2 id="qDimName" class="text-lg font-bold text-white">Craft & Architecture</h2>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <div class="text-xs font-semibold text-slate-400">
-                        <span id="txtScenarioLabel">Scenario</span> <span id="qCurrent" class="text-white font-bold">1</span> / <span id="qTotal">30</span>
-                    </div>
-                    <div class="text-[11px] text-slate-500 mt-0.5" id="stageProgressText">Pillar 1/5 • 6 Scenarios</div>
-                </div>
-            </div>
-
-            <!-- Progress bar -->
-            <div class="w-full bg-slate-800 rounded-full h-2 mb-6 overflow-hidden">
-                <div id="progressBar" class="bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-500 h-2 transition-all duration-300" style="width: 3.3%"></div>
-            </div>
-
-            <!-- Dynamic CAT Engine Status Badge -->
-            <div id="catStatusBanner" class="mb-4 flex items-center justify-between p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm">🎯</span>
-                    <span id="catStatusText" class="font-medium text-slate-300">Initial Baseline Calibration (Difficulty: Tier 2)</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] uppercase font-bold text-slate-500" id="catDiffLabel">Difficulty</span>
-                    <div id="catDifficultyStars" class="flex gap-1 text-amber-400 text-xs">★★☆☆☆</div>
-                </div>
-            </div>
-
-            <!-- Scenario Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl">
-                <!-- Interview Source & Question Type Tag -->
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <span id="qSourceTag" class="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-800 text-sky-400 border border-slate-700">
-                        🏢 Glassdoor: Stripe Senior Backend
-                    </span>
-                    <span id="qTypeTag" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20">
-                        Architecture Trade-off
-                    </span>
-                </div>
-
-                <h3 id="qTitle" class="text-xl font-bold text-white mb-3">Technical Debt & Refactoring Legacy Monoliths</h3>
-                <p id="qScenario" class="text-slate-300 text-sm leading-relaxed mb-6">
-                    You inherit a critical legacy service that is becoming difficult to maintain and has low test coverage. How do you approach it?
-                </p>
-
-                <!-- Options Container -->
-                <div id="optionsContainer" class="space-y-3">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-
-            <!-- Navigation Controls -->
-            <div class="mt-6 flex items-center justify-between text-xs text-slate-400">
-                <button onclick="previousQuestion()" id="btnPrev" class="hidden px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition-all">
-                    ← <span id="btnPrevText">Previous Scenario</span>
-                </button>
-                <div class="text-[11px] text-slate-500 italic" id="navHint">
-                    Tip: Press 1-5 on your keyboard to instantly select an option
-                </div>
-            </div>
-        </div>
-
-        <!-- RESULTS SCREEN -->
-        <div id="resultsScreen" class="hidden">
-            <!-- Score Overview Header -->
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4">
-                    <span>✅ DevCaliber Assessment Complete</span>
-                </div>
-                <h1 class="text-3xl md:text-5xl font-black text-white" id="candidateResultTitle">
-                    Assessment Diagnostic Report
-                </h1>
-                <p class="text-sm text-slate-400 mt-2" id="assessmentMeta">
-                    Track • Mode • Questions
-                </p>
-            </div>
-
-            <!-- Main Seniority Level Card -->
-            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-sky-950/40 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden mb-8">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-sky-400 mb-1 block" id="verifiedTierLabel">VERIFIED SENIORITY TIER</span>
-                        <h2 class="text-4xl md:text-5xl font-extrabold text-white" id="overallLevelCode">L3 — Senior Engineer</h2>
-                        <p class="text-sm text-slate-300 mt-2 max-w-xl" id="overallLevelDesc">
-                            Autonomous in executing high-complexity initiatives. Sets architectural direction and elevates team code standards.
-                        </p>
-                        <!-- Global Level Equivalence -->
-                        <div class="mt-4 flex flex-wrap gap-2 text-[11px] font-mono">
-                            <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300">Google: <strong class="text-sky-300" id="equivGoogle">L5</strong></span>
-                            <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300">Meta: <strong class="text-indigo-300" id="equivMeta">E5</strong></span>
-                            <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300">Amazon: <strong class="text-purple-300" id="equivAmazon">SDE III</strong></span>
-                        </div>
-                    </div>
-                    <div class="flex flex-row md:flex-col items-center justify-center gap-4 bg-slate-950/70 border border-slate-800 p-6 rounded-2xl min-w-[200px] text-center">
-                        <div>
-                            <span class="text-xs text-slate-400 block" id="compositeScoreLabel">Composite Score</span>
-                            <span class="text-4xl font-black text-sky-400" id="overallScoreNum">3.64</span>
-                            <span class="text-xs text-slate-500">/ 5.0</span>
-                        </div>
-                        <div class="border-t border-slate-800/80 pt-3 w-full">
-                            <span class="text-xs text-slate-400 block" id="percentileLabel">Estimated Percentile*</span>
-                            <span class="text-xl font-black text-purple-400" id="overallPercentileNum">Top 18%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reliability & Progress -->
-            <div id="reliabilityBox" class="mb-8 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 text-xs text-slate-300 space-y-2"></div>
-            <div id="progressBox" class="hidden mb-8 rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 text-xs text-slate-300 space-y-1"></div>
-
-            <!-- Radar Chart & Dimension Scores -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <!-- Radar Chart Card -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center">
-                    <h3 class="font-bold text-white text-sm mb-4 w-full text-left" id="radarTitle">Engineering Competency Radar</h3>
-                    <div class="w-full max-w-[340px] aspect-square">
-                        <canvas id="competencyChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Dimension Progress Bars -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
-                    <h3 class="font-bold text-white text-sm mb-4" id="breakdownTitle">Five Pillars of Seniority Breakdown</h3>
-                    <div id="dimensionBreakdownContainer" class="space-y-4">
-                        <!-- Populated dynamically -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Targeted Promotion Roadmap -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 md:p-8 mb-8">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="text-2xl">🎯</span>
-                    <div>
-                        <h3 class="text-lg font-bold text-white" id="roadmapTitle">Targeted Promotion Roadmap</h3>
-                        <p class="text-slate-400 text-xs" id="roadmapSubtitle">Actionable behaviors and curated industry reading to unlock your next engineering tier.</p>
-                    </div>
-                </div>
-                <div id="roadmapContainer" class="space-y-6">
-                    <!-- Dynamic -->
-                </div>
-            </div>
-
-            <!-- Share & Badge Export Card -->
-            <div class="flex flex-wrap items-center justify-between gap-4 p-6 bg-slate-900 border border-slate-800 rounded-2xl">
-                <div>
-                    <h4 class="font-bold text-white text-sm" id="badgeCardTitle">Add Verified Seniority Badge to GitHub README</h4>
-                    <p class="text-xs text-slate-400" id="badgeCardDesc">Showcase your validated engineering tier on your personal GitHub profile.</p>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="copyBadgeMarkdown()" id="btnCopyBadge" class="bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs px-4 py-2.5 rounded-lg transition-all shadow-md">
-                        📋 Copy Badge Markdown
-                    </button>
-                    <button onclick="downloadShareCard()" id="btnShareCard" class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-xs px-4 py-2.5 rounded-lg transition-all shadow-md">
-                        🖼️ Download Share Card
-                    </button>
-                    <button onclick="location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs px-4 py-2.5 rounded-lg transition-all">
-                        🔄 Retake Benchmark
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Embedded Question Bank & App Logic -->
-    <script>
-        /*QUESTIONS_START*/
-        const QUESTIONS_BANK = [
+[
  {
   "id": "craft_01",
+  "dimension": "craft",
   "title": "Technical Debt & Refactoring Legacy Monoliths",
   "scenario": "You inherit a critical legacy service that is becoming difficult to maintain and has low test coverage. How do you approach it?",
   "title_tr": "Teknik Borç Yönetimi & Legacy Monolith Refactoring",
@@ -380,11 +47,11 @@
   "difficulty": 2,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Stripe Senior Backend (Monolith Decomposition & Refactoring)",
-  "sprint": true,
-  "dim": "craft"
+  "sprint": true
  },
  {
   "id": "craft_02",
+  "dimension": "craft",
   "title": "System Design & 10x Scalability Planning",
   "scenario": "Your system is expected to experience a 10x traffic spike over the next two quarters. What is your reaction?",
   "title_tr": "System Design & 10x Ölçeklenebilirlik Planlaması",
@@ -430,11 +97,11 @@
   "difficulty": 3,
   "question_type": "system_design",
   "interview_source": "Glassdoor: Meta E5/E6 Systems (Scalability Bottlenecks & Capacity Planning)",
-  "sprint": false,
-  "dim": "craft"
+  "sprint": false
  },
  {
   "id": "craft_03",
+  "dimension": "craft",
   "title": "Zero-Downtime Data Migration & High-Risk Breaking Changes",
   "scenario": "You need to alter a database schema with 50 million rows and change a core entity used across 4 internal services without any maintenance downtime.",
   "title_tr": "Zero-Downtime Data Migration & Kritik Şema Dönüşümü",
@@ -480,11 +147,11 @@
   "difficulty": 4,
   "question_type": "system_design",
   "interview_source": "Glassdoor: Netflix Senior Platform (Zero-Downtime Database Migration & Dual-Writing)",
-  "sprint": false,
-  "dim": "craft"
+  "sprint": false
  },
  {
   "id": "craft_04",
+  "dimension": "craft",
   "title": "Distributed Caching & Stampede Prevention",
   "scenario": "During peak load, a cache cluster eviction causes a thundering herd (cache stampede) that nearly brings down the primary database. How do you resolve it?",
   "title_tr": "Distributed Caching & Thundering Herd (Stampede) Önleme",
@@ -530,11 +197,11 @@
   "difficulty": 4,
   "question_type": "system_design",
   "interview_source": "Glassdoor: Google L5 Infrastructure (Distributed Caching & Thundering Herd)",
-  "sprint": true,
-  "dim": "craft"
+  "sprint": true
  },
  {
   "id": "craft_05",
+  "dimension": "craft",
   "title": "Architectural Boundary: Monolith vs Microservices",
   "scenario": "A debate arises: should your team split a growing monolithic domain into 3 separate microservices?",
   "title_tr": "Mimari Sınırlar: Modular Monolith vs Microservices",
@@ -580,11 +247,11 @@
   "difficulty": 3,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Uber Senior Staff (Architectural Boundaries & Service Decomposition)",
-  "sprint": true,
-  "dim": "craft"
+  "sprint": true
  },
  {
   "id": "craft_06",
+  "dimension": "craft",
   "title": "Zero-Day Vulnerability & Supply Chain Security",
   "scenario": "A critical remote code execution (RCE) vulnerability (like Log4j / XZ Utils) is discovered in a core open-source library used across 30 company repositories. What do you do?",
   "title_tr": "Zero-Day Zafiyeti & Supply Chain Güvenliği",
@@ -630,11 +297,11 @@
   "difficulty": 5,
   "question_type": "system_design",
   "interview_source": "Glassdoor: Datadog Principal Security (Supply Chain Attacks & Zero-Day Mitigation)",
-  "sprint": false,
-  "dim": "craft"
+  "sprint": false
  },
  {
   "id": "own_01",
+  "dimension": "ownership",
   "title": "Production Sev-1 Outage & Incident Response",
   "scenario": "A critical production incident occurs during peak hours affecting 20% of users. What role do you naturally play?",
   "title_tr": "Production Sev-1 Outage & Incident Yönetimi",
@@ -680,11 +347,11 @@
   "difficulty": 3,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Google L5 SRE (Incident Commander & Blameless Postmortems)",
-  "sprint": true,
-  "dim": "ownership"
+  "sprint": true
  },
  {
   "id": "own_02",
+  "dimension": "ownership",
   "title": "Observability & Production Readiness",
   "scenario": "How do you ensure a new critical service is truly ready for production?",
   "title_tr": "Observability & Production Readiness Standartları",
@@ -730,11 +397,11 @@
   "difficulty": 2,
   "question_type": "system_design",
   "interview_source": "Glassdoor: Spotify Senior Backend (Production Readiness & Golden Signals)",
-  "sprint": true,
-  "dim": "ownership"
+  "sprint": true
  },
  {
   "id": "own_03",
+  "dimension": "ownership",
   "title": "Alert Fatigue & On-Call Engineering Health",
   "scenario": "Your team receives 50+ PagerDuty alerts per week, most of which are non-actionable or resolve themselves. Engineers are exhausted. What do you do?",
   "title_tr": "Alert Fatigue & On-Call Mühendislik Sağlığı",
@@ -780,11 +447,11 @@
   "difficulty": 3,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Amazon SDE III (Operational Excellence & On-Call Health)",
-  "sprint": false,
-  "dim": "ownership"
+  "sprint": false
  },
  {
   "id": "own_04",
+  "dimension": "ownership",
   "title": "Disaster Recovery & Chaos Engineering",
   "scenario": "How do you validate that your architecture can survive the total loss of an entire cloud availability zone (AZ)?",
   "title_tr": "Disaster Recovery & Chaos Engineering",
@@ -830,11 +497,11 @@
   "difficulty": 4,
   "question_type": "system_design",
   "interview_source": "Glassdoor: AWS Principal Architect (Disaster Recovery & Multi-AZ Failover)",
-  "sprint": false,
-  "dim": "ownership"
+  "sprint": false
  },
  {
   "id": "own_05",
+  "dimension": "ownership",
   "title": "SLOs, Error Budgets & Velocity Disputes",
   "scenario": "Product management wants to push high-risk features rapidly, but the service's monthly Error Budget is 90% burned with two weeks left. How do you handle this?",
   "title_tr": "SLO, Error Budget & Hız vs Kararlılık Çatışması",
@@ -880,11 +547,11 @@
   "difficulty": 4,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Google SRE Manager (SLO Negotiations & Error Budget Policies)",
-  "sprint": true,
-  "dim": "ownership"
+  "sprint": true
  },
  {
   "id": "own_06",
+  "dimension": "ownership",
   "title": "Cascading Failures & Deadlock Protection",
   "scenario": "A degraded downstream payment provider starts responding with 15-second latencies, causing thread exhaustion and cascading failures across your entire API gateway.",
   "title_tr": "Cascading Failure, Deadlock & Circuit Breaker Mimarisi",
@@ -930,11 +597,11 @@
   "difficulty": 5,
   "question_type": "system_design",
   "interview_source": "Glassdoor: Meta Staff Infrastructure (Cascading Failures & Graceful Degradation)",
-  "sprint": false,
-  "dim": "ownership"
+  "sprint": false
  },
  {
   "id": "imp_01",
+  "dimension": "impact",
   "title": "Prioritization & Product Trade-offs",
   "scenario": "Sales commits to a major enterprise customer promising a complex feature in 3 weeks, but engineering estimates 8 weeks. How do you respond?",
   "title_tr": "Kapsam Pazarlığı & Pragmatik MVP Çıkışı",
@@ -980,11 +647,11 @@
   "difficulty": 2,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Stripe Product Engineer (Pragmatic Scope Pruning & Delivery)",
-  "sprint": true,
-  "dim": "impact"
+  "sprint": true
  },
  {
   "id": "imp_02",
+  "dimension": "impact",
   "title": "Metric-Driven Engineering & Measuring ROI",
   "scenario": "Your team wants to spend 2 months refactoring an internal service. How do you justify this investment to leadership?",
   "title_tr": "Metric-Driven Mühendislik & İş Yatırımı Geri Dönüşü (ROI)",
@@ -1030,11 +697,11 @@
   "difficulty": 3,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Airbnb Senior Fullstack (Data-Driven Development & Business ROI)",
-  "sprint": false,
-  "dim": "impact"
+  "sprint": false
  },
  {
   "id": "imp_03",
+  "dimension": "impact",
   "title": "Technical Spikes vs Hard Customer Deadlines",
   "scenario": "A critical milestone approaches, but the third-party API your feature relies upon has severe undocumented limitations. How do you proceed?",
   "title_tr": "Technical Spike vs Kesin Müşteri Teslim Tarihleri",
@@ -1080,11 +747,11 @@
   "difficulty": 3,
   "question_type": "scenario",
   "interview_source": "Glassdoor: DoorDash Senior Backend (Technical Spikes & Timeline Commitments)",
-  "sprint": true,
-  "dim": "impact"
+  "sprint": true
  },
  {
   "id": "imp_04",
+  "dimension": "impact",
   "title": "Product Discovery & User Empathy",
   "scenario": "A proposed feature specification is technically feasible, but you suspect it will confuse end-users and fail to solve their real pain point. What do you do?",
   "title_tr": "Kullanıcı Empatisi & Mühendislikte Product Discovery",
@@ -1130,11 +797,11 @@
   "difficulty": 2,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Figma Senior Engineer (Customer Empathy & Product Craft)",
-  "sprint": false,
-  "dim": "impact"
+  "sprint": false
  },
  {
   "id": "imp_05",
+  "dimension": "impact",
   "title": "Cloud FinOps & Infrastructure Cost Optimization",
   "scenario": "Your company's cloud bill spikes 60% month-over-month due to rapid data ingestion. The VP demands immediate cost remediation. How do you lead this?",
   "title_tr": "Cloud FinOps & Altyapı Maliyet Optimizasyonu",
@@ -1180,11 +847,11 @@
   "difficulty": 4,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Uber Senior Infrastructure (FinOps & Compute Cost Reduction)",
-  "sprint": false,
-  "dim": "impact"
+  "sprint": false
  },
  {
   "id": "imp_06",
+  "dimension": "impact",
   "title": "Buy vs Build Architectural Decisions",
   "scenario": "Your team needs an advanced Feature Flagging and A/B experimentation platform. Some engineers want to build it in-house; others want to buy a SaaS solution.",
   "title_tr": "Buy vs Build (Satın Al vs Kendin Yap) Mimari Kararları",
@@ -1230,11 +897,11 @@
   "difficulty": 4,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Netflix Staff Architect (Buy vs Build Strategy & Core Competency)",
-  "sprint": true,
-  "dim": "impact"
+  "sprint": true
  },
  {
   "id": "lead_01",
+  "dimension": "leadership",
   "title": "Technical Disagreements & Consensus Building",
   "scenario": "Two senior engineers strongly disagree on database choice (PostgreSQL vs DynamoDB/NoSQL) for a major new service, stalling the project for 2 weeks. How do you resolve this?",
   "title_tr": "Teknik Anlaşmazlıklar & Uzlaşı (Consensus) Kültürü",
@@ -1280,11 +947,11 @@
   "difficulty": 3,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Google L5 Tech Lead (Reaching Technical Consensus & RFCs)",
-  "sprint": true,
-  "dim": "leadership"
+  "sprint": true
  },
  {
   "id": "lead_02",
+  "dimension": "leadership",
   "title": "Mentorship & Force Multiplication",
   "scenario": "A mid-level engineer on your team struggles with system design and frequently feels overwhelmed when assigned ambiguous tasks. How do you help them?",
   "title_tr": "Mentörlük, Sponsorluk & Ekip Çarpan Etkisi",
@@ -1330,11 +997,11 @@
   "difficulty": 2,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Meta E5 Engineering (Mentorship & Force Multiplication)",
-  "sprint": true,
-  "dim": "leadership"
+  "sprint": true
  },
  {
   "id": "lead_03",
+  "dimension": "leadership",
   "title": "Code Review Culture & Uplifting Peers",
   "scenario": "An engineer submits a massive 1,500-line Pull Request with architectural flaws and no tests, but the sprint deadline is today. How do you handle the review?",
   "title_tr": "Code Review Kültürü & Mühendislik Kalite Çıtası",
@@ -1380,11 +1047,11 @@
   "difficulty": 2,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Stripe Senior Software Engineer (Code Review Standards & Empathy)",
-  "sprint": false,
-  "dim": "leadership"
+  "sprint": false
  },
  {
   "id": "lead_04",
+  "dimension": "leadership",
   "title": "Cross-Team Engineering Guilds & Alignment",
   "scenario": "Multiple teams are independently inventing divergent solutions for authentication, logging, and API schemas, causing integration friction across the company.",
   "title_tr": "Takımlar Arası Mühendislik Guild'leri & Standartlaştırma",
@@ -1430,11 +1097,11 @@
   "difficulty": 4,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Spotify Chapter Lead (Engineering Guilds & Technical Alignment)",
-  "sprint": true,
-  "dim": "leadership"
+  "sprint": true
  },
  {
   "id": "lead_05",
+  "dimension": "leadership",
   "title": "Raising the Technical Hiring Bar",
   "scenario": "Your hiring committee is split on a senior candidate: strong coding skills, but shows subtle signs of poor collaboration and dismissing feedback.",
   "title_tr": "Teknik İşe Alım & Ekip Kalite Çıtasını Yükseltme",
@@ -1480,11 +1147,11 @@
   "difficulty": 3,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Amazon Bar Raiser (Technical Interviewing & Culture Fit)",
-  "sprint": false,
-  "dim": "leadership"
+  "sprint": false
  },
  {
   "id": "lead_06",
+  "dimension": "leadership",
   "title": "Executive Communication & Communicating Risk",
   "scenario": "Your core payment infrastructure has a subtle data corruption risk under high concurrency. Refactoring takes 9 months, but executives are laser-focused on new product revenue.",
   "title_tr": "Executive İletişim & Yüksek Risklerin İş Diline Tercümesi",
@@ -1530,11 +1197,11 @@
   "difficulty": 5,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Apple Principal Engineer (Executive Technical Communication & High-Stakes Risk)",
-  "sprint": false,
-  "dim": "leadership"
+  "sprint": false
  },
  {
   "id": "auto_01",
+  "dimension": "autonomy",
   "title": "Navigating Ambiguous Goals",
   "scenario": "Your VP says: 'Our developer onboarding is too slow. Fix it.' There are no existing specs, tickets, or documentation. What do you do?",
   "title_tr": "Belirsizlik Yönetimi & Ucu Açık Görevleri Yapılandırma",
@@ -1580,11 +1247,11 @@
   "difficulty": 3,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Meta Staff E6 (Navigating Ambiguity & 0-to-1 Scoping)",
-  "sprint": true,
-  "dim": "autonomy"
+  "sprint": true
  },
  {
   "id": "auto_02",
+  "dimension": "autonomy",
   "title": "Project Execution from 0 to 1",
   "scenario": "You are assigned to build a brand new real-time analytics microservice from scratch with no pre-existing templates. How do you approach the build?",
   "title_tr": "Bağımsız İcra & Sıfırdan (0-to-1) Mimari Kurulumu",
@@ -1630,11 +1297,11 @@
   "difficulty": 2,
   "question_type": "system_design",
   "interview_source": "Glassdoor: Uber Senior Backend (0-to-1 Greenfield Execution)",
-  "sprint": true,
-  "dim": "autonomy"
+  "sprint": true
  },
  {
   "id": "auto_03",
+  "dimension": "autonomy",
   "title": "Cross-Team Friction & Breaking Architectural Blockers",
   "scenario": "Your critical project is blocked because another core team won't prioritize an API you need for 6 months. How do you unblock yourself?",
   "title_tr": "Takımlar Arası Bağımlılık Tıkanıklıklarını Çözme",
@@ -1680,11 +1347,11 @@
   "difficulty": 4,
   "question_type": "scenario",
   "interview_source": "Glassdoor: Google L6 Staff Software Engineer (Cross-Org Dependency Resolution)",
-  "sprint": true,
-  "dim": "autonomy"
+  "sprint": true
  },
  {
   "id": "auto_04",
+  "dimension": "autonomy",
   "title": "Balancing Conflicting Stakeholder Demands",
   "scenario": "The Head of Security mandates strict Zero-Trust compliance requiring 2FA everywhere, while the VP of Growth demands frictionless one-click user signup. What is your path forward?",
   "title_tr": "Çelişen Yönetici Taleplerini Dengeleme & Önceliklendirme",
@@ -1730,11 +1397,11 @@
   "difficulty": 4,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Amazon Principal SDE (Balancing Stakeholder Conflicts & Frictionless Security)",
-  "sprint": false,
-  "dim": "autonomy"
+  "sprint": false
  },
  {
   "id": "auto_05",
+  "dimension": "autonomy",
   "title": "Identifying Hidden Systemic Blind Spots",
   "scenario": "Everything appears green on current team dashboards, but you notice subtle architectural patterns that will cause systemic collapse if user base grows 3x next year.",
   "title_tr": "Gizli Sistemik Mimari Kör Noktaları Tespit Etme",
@@ -1780,11 +1447,11 @@
   "difficulty": 5,
   "question_type": "system_design",
   "interview_source": "Glassdoor: Netflix Staff Architect (Systemic Blind Spots & Capacity Cliffs)",
-  "sprint": false,
-  "dim": "autonomy"
+  "sprint": false
  },
  {
   "id": "auto_06",
+  "dimension": "autonomy",
   "title": "Multi-Year Technical Vision & Direction",
   "scenario": "Your engineering organization is transitioning from a startup to a mature enterprise. How do you shape the multi-year technical trajectory?",
   "title_tr": "Çok Yıllık Teknik Strateji & North Star Vizyonu",
@@ -1830,11 +1497,11 @@
   "difficulty": 5,
   "question_type": "architecture_tradeoff",
   "interview_source": "Glassdoor: Stripe Principal Systems Architect (Multi-Year Technical Vision & North Star)",
-  "sprint": false,
-  "dim": "autonomy"
+  "sprint": false
  },
  {
   "id": "craft_07",
+  "dimension": "craft",
   "title": "Reviewing a Long, Passing Pull Request",
   "scenario": "A teammate's pull request passes every test, but one function is 200 lines long with deeply nested conditionals. You are the reviewer.",
   "title_tr": "Uzun Ama Testleri Geçen Bir Pull Request'i İncelemek",
@@ -1880,11 +1547,11 @@
   "sprint": false,
   "difficulty": 1,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "craft"
+  "interview_source": null
  },
  {
   "id": "craft_08",
+  "dimension": "craft",
   "title": "Testing an Integration with a Payment API",
   "scenario": "You finished a feature that charges customers through a third-party payment API. How do you test it before release?",
   "title_tr": "Ödeme API'si Entegrasyonunu Test Etmek",
@@ -1930,11 +1597,11 @@
   "sprint": false,
   "difficulty": 2,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "craft"
+  "interview_source": null
  },
  {
   "id": "craft_09",
+  "dimension": "craft",
   "title": "Breaking Change in a Public API",
   "scenario": "A field in your public API has to change in a way that breaks existing clients. External customers depend on it.",
   "title_tr": "Public API'de Geriye Dönük Uyumsuz Değişiklik",
@@ -1980,11 +1647,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "architecture_tradeoff",
-  "interview_source": null,
-  "dim": "craft"
+  "interview_source": null
  },
  {
   "id": "craft_10",
+  "dimension": "craft",
   "title": "Intermittent Duplicate Orders Under Load",
   "scenario": "Once in a while, customers get two orders for a single checkout, mostly during traffic peaks. You cannot reproduce it on your machine.",
   "title_tr": "Yük Altında Aralıklı Oluşan Çift Siparişler",
@@ -2030,11 +1697,11 @@
   "sprint": false,
   "difficulty": 4,
   "question_type": "system_design",
-  "interview_source": null,
-  "dim": "craft"
+  "interview_source": null
  },
  {
   "id": "craft_11",
+  "dimension": "craft",
   "title": "Proposal to Rewrite the Core Service",
   "scenario": "A respected colleague proposes rewriting the core service in a new language for a promised 3x performance gain. The estimate is 18 months.",
   "title_tr": "Çekirdek Servisin Yeniden Yazılması Önerisi",
@@ -2080,11 +1747,11 @@
   "sprint": false,
   "difficulty": 5,
   "question_type": "architecture_tradeoff",
-  "interview_source": null,
-  "dim": "craft"
+  "interview_source": null
  },
  {
   "id": "craft_12",
+  "dimension": "craft",
   "title": "Choosing a Datastore for a New Feature",
   "scenario": "A new activity-feed feature has heavy writes and loosely structured data. Which datastore do you use?",
   "title_tr": "Yeni Bir Özellik İçin Veritabanı Seçimi",
@@ -2130,11 +1797,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "architecture_tradeoff",
-  "interview_source": null,
-  "dim": "craft"
+  "interview_source": null
  },
  {
   "id": "own_07",
+  "dimension": "ownership",
   "title": "Error Rate Creeping Up After Your Deploy",
   "scenario": "You deployed a change and notice the error rate rising slightly. No alert has fired and nobody has complained.",
   "title_tr": "Deploy Sonrası Yavaşça Artan Hata Oranı",
@@ -2180,11 +1847,11 @@
   "sprint": false,
   "difficulty": 1,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "ownership"
+  "interview_source": null
  },
  {
   "id": "own_08",
+  "dimension": "ownership",
   "title": "First On-Call Night",
   "scenario": "It is 3 a.m., you are on call for the first time, and an alert fires that you do not recognize.",
   "title_tr": "İlk On-Call Gecesi",
@@ -2230,11 +1897,11 @@
   "sprint": false,
   "difficulty": 2,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "ownership"
+  "interview_source": null
  },
  {
   "id": "own_09",
+  "dimension": "ownership",
   "title": "Postmortem After a Junior's Outage",
   "scenario": "An outage was triggered by a change from a junior engineer. You are running the postmortem.",
   "title_tr": "Bir Junior'ın Sebep Olduğu Kesinti Sonrası Postmortem",
@@ -2280,11 +1947,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "ownership"
+  "interview_source": null
  },
  {
   "id": "own_10",
+  "dimension": "ownership",
   "title": "p99 Latency Doubled but the Average Looks Fine",
   "scenario": "After a release, p99 latency has doubled while the average is unchanged. Users have not complained yet.",
   "title_tr": "p99 Gecikmesi İkiye Katlandı Ama Ortalama Normal",
@@ -2330,11 +1997,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "ownership"
+  "interview_source": null
  },
  {
   "id": "own_11",
+  "dimension": "ownership",
   "title": "Irreversible Data Migration in Production",
   "scenario": "You must run a migration that rewrites customer data in production and cannot be undone once it starts.",
   "title_tr": "Production'da Geri Alınamayan Veri Migrasyonu",
@@ -2380,11 +2047,11 @@
   "sprint": false,
   "difficulty": 4,
   "question_type": "system_design",
-  "interview_source": null,
-  "dim": "ownership"
+  "interview_source": null
  },
  {
   "id": "own_12",
+  "dimension": "ownership",
   "title": "A Shared Platform Outage Keeps Coming Back",
   "scenario": "A shared platform has a major outage roughly every quarter. After each one, every team patches its own symptoms and moves on.",
   "title_tr": "Paylaşılan Platformda Tekrarlayan Kesinti",
@@ -2430,11 +2097,11 @@
   "sprint": false,
   "difficulty": 5,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "ownership"
+  "interview_source": null
  },
  {
   "id": "imp_07",
+  "dimension": "impact",
   "title": "A Deadline Shorter Than Your Estimate",
   "scenario": "Your product manager asks for a small feature by Friday. You estimate it will be done next Wednesday.",
   "title_tr": "Tahmininizden Kısa Bir Teslim Tarihi",
@@ -2480,11 +2147,11 @@
   "sprint": false,
   "difficulty": 1,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "impact"
+  "interview_source": null
  },
  {
   "id": "imp_08",
+  "dimension": "impact",
   "title": "Users Say the Feature Is Confusing",
   "scenario": "Several users complain that a feature you built is confusing. You think the interface is fine.",
   "title_tr": "Kullanıcılar Özelliğin Kafa Karıştırdığını Söylüyor",
@@ -2530,11 +2197,11 @@
   "sprint": false,
   "difficulty": 2,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "impact"
+  "interview_source": null
  },
  {
   "id": "imp_09",
+  "dimension": "impact",
   "title": "Two Quarters of Work, No Metric Movement",
   "scenario": "A feature your team spent two quarters on has shipped, and the target metric has not moved.",
   "title_tr": "İki Çeyrek Emek, Metrikte Hareket Yok",
@@ -2580,11 +2247,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "impact"
+  "interview_source": null
  },
  {
   "id": "imp_10",
+  "dimension": "impact",
   "title": "A Quick Hack to Land a Big Customer",
   "scenario": "Sales needs a quick hack to land a large customer. It will create technical debt in a core module.",
   "title_tr": "Büyük Bir Müşteriyi Kazanmak İçin Hızlı Bir Çözüm",
@@ -2630,11 +2297,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "architecture_tradeoff",
-  "interview_source": null,
-  "dim": "impact"
+  "interview_source": null
  },
  {
   "id": "imp_11",
+  "dimension": "impact",
   "title": "A Promising A/B Test with Thin Evidence",
   "scenario": "An A/B test shows a 2% conversion lift, but it ran for only three days on a small sample. The PM wants to ship.",
   "title_tr": "Kanıtı Zayıf Ama Umut Verici Bir A/B Testi",
@@ -2680,11 +2347,11 @@
   "sprint": false,
   "difficulty": 4,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "impact"
+  "interview_source": null
  },
  {
   "id": "imp_12",
+  "dimension": "impact",
   "title": "Company Strategy Shifts Under Your Platform Project",
   "scenario": "Company priorities change, and your six-month platform investment no longer lines up with the new strategy.",
   "title_tr": "Şirket Stratejisi Platform Projenizin Altında Değişiyor",
@@ -2730,11 +2397,11 @@
   "sprint": false,
   "difficulty": 5,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "impact"
+  "interview_source": null
  },
  {
   "id": "lead_07",
+  "dimension": "leadership",
   "title": "A Newcomer Asks Something Already in the Wiki",
   "scenario": "A new teammate asks you a question that is already answered in the team wiki.",
   "title_tr": "Yeni Gelen Biri Wiki'de Zaten Olan Bir Şeyi Soruyor",
@@ -2780,11 +2447,11 @@
   "sprint": false,
   "difficulty": 1,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "leadership"
+  "interview_source": null
  },
  {
   "id": "lead_08",
+  "dimension": "leadership",
   "title": "Spotting a Flaw in a Senior's Design",
   "scenario": "In a design review you notice a flaw in a design written by a more senior engineer. Several senior people are in the room.",
   "title_tr": "Kıdemli Birinin Tasarımında Hata Görmek",
@@ -2830,11 +2497,11 @@
   "sprint": false,
   "difficulty": 2,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "leadership"
+  "interview_source": null
  },
  {
   "id": "lead_09",
+  "dimension": "leadership",
   "title": "A Fast Shipper Who Is Hard to Work With",
   "scenario": "A strong engineer ships very fast, but the code is hard for others to maintain and they are dismissive in reviews.",
   "title_tr": "Hızlı Teslim Eden Ama Birlikte Çalışması Zor Bir Mühendis",
@@ -2880,11 +2547,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "leadership"
+  "interview_source": null
  },
  {
   "id": "lead_10",
+  "dimension": "leadership",
   "title": "Leading Engineers Who Know More Than You",
   "scenario": "You are asked to lead a project with three engineers who are more experienced than you in some of the technical areas involved.",
   "title_tr": "Sizden Fazla Bilen Mühendisleri Yönlendirmek",
@@ -2930,11 +2597,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "leadership"
+  "interview_source": null
  },
  {
   "id": "lead_11",
+  "dimension": "leadership",
   "title": "Three Teams Building the Same Internal Tool",
   "scenario": "You find out that three teams in your organization are each building a similar internal tool.",
   "title_tr": "Aynı Dahili Aracı Geliştiren Üç Takım",
@@ -2980,11 +2647,11 @@
   "sprint": false,
   "difficulty": 4,
   "question_type": "architecture_tradeoff",
-  "interview_source": null,
-  "dim": "leadership"
+  "interview_source": null
  },
  {
   "id": "lead_12",
+  "dimension": "leadership",
   "title": "Leadership Wants to Drop a Quality Practice",
   "scenario": "Engineering leadership wants to cut a quality practice, such as code review or automated testing, to move faster.",
   "title_tr": "Yönetim Bir Kalite Pratiğinden Vazgeçmek İstiyor",
@@ -3030,11 +2697,11 @@
   "sprint": false,
   "difficulty": 5,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "leadership"
+  "interview_source": null
  },
  {
   "id": "auto_07",
+  "dimension": "autonomy",
   "title": "A Two-Sentence Task Description",
   "scenario": "You are assigned a task whose whole description is two vague sentences.",
   "title_tr": "İki Cümlelik Bir Görev Tanımı",
@@ -3080,11 +2747,11 @@
   "sprint": false,
   "difficulty": 1,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "autonomy"
+  "interview_source": null
  },
  {
   "id": "auto_08",
+  "dimension": "autonomy",
   "title": "Blocked by Another Team for Three Days",
   "scenario": "You are blocked on another team's change, and they have not responded for three days.",
   "title_tr": "Başka Bir Takım Yüzünden Üç Gündür Bloke",
@@ -3130,11 +2797,11 @@
   "sprint": false,
   "difficulty": 2,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "autonomy"
+  "interview_source": null
  },
  {
   "id": "auto_09",
+  "dimension": "autonomy",
   "title": "A Manual Process Nobody Owns",
   "scenario": "You notice the team spends about 20% of its time on a manual process that nobody owns.",
   "title_tr": "Kimsenin Sahiplenmediği Manuel Bir Süreç",
@@ -3180,11 +2847,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "autonomy"
+  "interview_source": null
  },
  {
   "id": "auto_10",
+  "dimension": "autonomy",
   "title": "A Fixed Deadline with Changing Requirements",
   "scenario": "You start a six-month project with a fixed deadline, and you already know the requirements will change along the way.",
   "title_tr": "Sabit Teslim Tarihi, Değişen Gereksinimler",
@@ -3230,11 +2897,11 @@
   "sprint": false,
   "difficulty": 3,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "autonomy"
+  "interview_source": null
  },
  {
   "id": "auto_11",
+  "dimension": "autonomy",
   "title": "An Unasked-for Scaling Concern",
   "scenario": "Nobody has asked you, but you suspect the company's data pipeline will not handle next year's growth plan.",
   "title_tr": "Kimsenin Sormadığı Bir Ölçeklenme Endişesi",
@@ -3280,11 +2947,11 @@
   "sprint": false,
   "difficulty": 4,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "autonomy"
+  "interview_source": null
  },
  {
   "id": "auto_12",
+  "dimension": "autonomy",
   "title": "Technical Strategy for an Unprecedented Product Area",
   "scenario": "You are asked to define the technical strategy for a new product area that has no precedent inside the company.",
   "title_tr": "Emsali Olmayan Bir Ürün Alanı İçin Teknik Strateji",
@@ -3330,674 +2997,6 @@
   "sprint": false,
   "difficulty": 5,
   "question_type": "scenario",
-  "interview_source": null,
-  "dim": "autonomy"
+  "interview_source": null
  }
-];
-        /*QUESTIONS_END*/
-
-        const DIMENSION_METADATA = {
-            craft: { name: "Craft & Architecture", name_tr: "Mimari & Mühendislik Ustalığı", icon: "⚡" },
-            ownership: { name: "Reliability & Ownership", name_tr: "Güvenilirlik & Sahiplenme", icon: "🛡️" },
-            impact: { name: "Business & Product Impact", name_tr: "İş & Ürün Etkisi", icon: "🎯" },
-            leadership: { name: "Leadership & Influence", name_tr: "Liderlik & Etki Alanı", icon: "🌟" },
-            autonomy: { name: "Autonomy & Ambiguity", name_tr: "Otonomi & Belirsizlik", icon: "🚀" }
-        };
-
-        // App State
-        let currentLang = "en";
-        const MODES = {
-            pulse:  { minutes: 5,   pick: q => q.is_quick },
-            sprint: { minutes: 30,  pick: q => q.sprint },
-            deep:   { minutes: 120, pick: q => true }
-        };
-        const DIM_ORDER = ["craft", "ownership", "impact", "leadership", "autonomy"];
-        const HISTORY_KEY = "devcaliber.history.v1";
-        let currentMode = "sprint";
-        let questionPool = [];     // questions still available for this session
-        let totalPlanned = 0;
-        let optionOrder = {};      // question id -> shuffled options
-        let lastResult = null;
-        let activeQuestions = [];  // questions shown so far, in order
-        let currentIndex = 0;
-        let userAnswers = {};
-        let userHistory = [];
-        let currentAdaptiveDifficulty = 2;
-        let timerInterval = null;
-        let timerSecondsRemaining = 3600;
-        let candidateNameVal = "Software Engineer";
-        let candidateTrackVal = "general";
-
-        // Language toggle
-        function toggleLanguage() {
-            currentLang = currentLang === "en" ? "tr" : "en";
-            updateLanguageUI();
-        }
-
-        function updateLanguageUI() {
-            const isTr = currentLang === "tr";
-            document.getElementById("langFlag").innerText = isTr ? "🇺🇸" : "🇹🇷";
-            document.getElementById("langLabel").innerText = isTr ? "English" : "Türkçe";
-
-            // Intro elements
-            document.getElementById("introBadge").innerText = isTr 
-                ? "🎯 Bilgisayarlı Uyarlanabilir Test (CAT) Kıdem Teşhis Motoru" 
-                : "🎯 Computerized Adaptive Testing (CAT) Seniority Diagnostic Engine";
-            document.getElementById("heroTitle1").innerText = isTr ? "Gerçek Mühendislik" : "Benchmark Your True";
-            document.getElementById("heroTitle2").innerText = isTr ? "Kıdemini Doğrula" : "Engineering Seniority";
-            document.getElementById("heroSubtitle").innerText = isTr
-                ? "Gerçek FAANG ve Glassdoor system design ve mimari senaryoları. Soru zorluğu, bir önceki sorunuza verdiğiniz cevaba göre dinamik olarak anlık ayarlanır."
-                : "Real FAANG & Glassdoor system design and architecture scenarios. Difficulty adapts after each question based on your immediate previous response.";
-            
-            document.getElementById("labelCandidate").innerText = isTr ? "Aday İsmi veya GitHub Kullanıcı Adı" : "Candidate Name or GitHub Handle";
-            document.getElementById("labelTrack").innerText = isTr ? "Mühendislik Uzmanlık Alanı (Track)" : "Engineering Track";
-            document.getElementById("labelMode").innerText = isTr ? "Değerlendirme Modu" : "Examination Mode";
-            
-            document.getElementById("modeSprintTitle").innerText = isTr ? "⚡ 30 Dakika Sprint" : "⚡ 30-Min Sprint";
-            document.getElementById("modeSprintDesc").innerText = isTr ? "15 uyarlanabilir senaryo · orta güvenilirlik" : "15 adaptive scenarios · medium confidence";
-            document.getElementById("modeSprintTag").innerText = isTr ? "ÖNERİLEN" : "RECOMMENDED";
-            document.getElementById("modeDeepTitle").innerText = isTr ? "🎓 2 Saatlik Derin Analiz" : "🎓 2-Hour Deep Dive";
-            document.getElementById("modeDeepDesc").innerText = isTr ? "60 uyarlanabilir senaryo · yüksek güvenilirlik" : "60 adaptive scenarios · high confidence";
-            document.getElementById("modePulseTitle").innerText = isTr ? "🔎 5 Dakika Nabız" : "🔎 5-Min Pulse";
-            document.getElementById("modePulseDesc").innerText = isTr ? "5 senaryo · düşük güvenilirlik" : "5 scenarios · low confidence";
-            document.getElementById("percentileLabel").innerText = isTr ? "Tahmini Yüzdelik*" : "Estimated Percentile*";
-
-            document.getElementById("btnStartText").innerText = isTr ? "Uyarlanabilir Kıdem Sınavını Başlat" : "Begin Adaptive Seniority Examination";
-            document.getElementById("introFooter").innerText = isTr ? "Ücretsiz & Açık Kaynak • Takip Yok • %100 İstemci Taraflı Hesaplama" : "Free & Open Source • Zero Tracking • 100% Client-Side Computation";
-
-            document.getElementById("levelingGuideTitle").innerText = isTr ? "Global Teknoloji Şirketleri Seviye (Leveling) Eşleşmesi" : "Global Industry Leveling Standard Mapping";
-            document.getElementById("levelingGuideDesc").innerText = isTr ? "DevCaliber L1–L5 standardının Google, Meta, Amazon ve Levels.fyi seviyeleriyle doğrudan karşılığı:" : "How DevCaliber's L1–L5 standard correlates across global Big Tech ladders and Levels.fyi:";
-
-            // Question Screen elements
-            if (!document.getElementById("questionScreen").classList.contains("hidden")) {
-                renderQuestion();
-            }
-        }
-
-        // Start Assessment
-        function startAssessment() {
-            candidateNameVal = document.getElementById("candidateName").value.trim() || "Software Engineer";
-            candidateTrackVal = document.getElementById("candidateTrack").value;
-            const evalMode = document.querySelector('input[name="evalMode"]:checked').value;
-
-            currentMode = MODES[evalMode] ? evalMode : "sprint";
-            questionPool = QUESTIONS_BANK.filter(MODES[currentMode].pick);
-            totalPlanned = questionPool.length;
-            timerSecondsRemaining = MODES[currentMode].minutes * 60;
-
-            activeQuestions = [];
-            optionOrder = {};
-            currentIndex = 0;
-            userAnswers = {};
-            userHistory = [];
-            currentAdaptiveDifficulty = 2; // Baseline
-            activeQuestions.push(pickNextQuestion());
-
-            document.getElementById("introScreen").classList.add("hidden");
-            document.getElementById("resultsScreen").classList.add("hidden");
-            document.getElementById("questionScreen").classList.remove("hidden");
-            document.getElementById("examTimerBadge").classList.remove("hidden");
-
-            startTimer();
-            renderQuestion();
-        }
-
-        // Real adaptive selection: finish one pillar at a time, and within a pillar
-        // pick the unanswered question closest to the current difficulty.
-        function pickNextQuestion() {
-            if (userHistory.length > 0) {
-                const last = userHistory[userHistory.length - 1];
-                if (last.score >= 4.0) currentAdaptiveDifficulty = Math.min(5, currentAdaptiveDifficulty + 1);
-                else if (last.score <= 2.0) currentAdaptiveDifficulty = Math.max(1, currentAdaptiveDifficulty - 1);
-            }
-            for (const dim of DIM_ORDER) {
-                const candidates = questionPool.filter(q => q.dim === dim && !activeQuestions.includes(q));
-                if (candidates.length === 0) continue;
-                candidates.sort((x, y) =>
-                    Math.abs(x.difficulty - currentAdaptiveDifficulty) - Math.abs(y.difficulty - currentAdaptiveDifficulty)
-                    || y.difficulty - x.difficulty);
-                return candidates[0];
-            }
-            return null;
-        }
-
-        // Shuffle options once per question so position never hints at seniority.
-        function getOptions(q) {
-            if (!optionOrder[q.id]) {
-                const arr = [...q.options];
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                optionOrder[q.id] = arr;
-            }
-            return optionOrder[q.id];
-        }
-
-        // Timer
-        function startTimer() {
-            clearInterval(timerInterval);
-            updateTimerDisplay();
-            timerInterval = setInterval(() => {
-                timerSecondsRemaining--;
-                if (timerSecondsRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    timerSecondsRemaining = 0;
-                    finishAssessment();
-                }
-                updateTimerDisplay();
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const mins = Math.floor(timerSecondsRemaining / 60);
-            const secs = timerSecondsRemaining % 60;
-            document.getElementById("examTimer").innerText = 
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // Render Question with CAT Logic
-        function renderQuestion() {
-            const isTr = currentLang === "tr";
-            const q = activeQuestions[currentIndex];
-            const dimMeta = DIMENSION_METADATA[q.dim];
-
-            // Update Stage Header
-            const stageNum = ["craft", "ownership", "impact", "leadership", "autonomy"].indexOf(q.dim) + 1;
-            document.getElementById("stageBadge").innerText = isTr ? `AŞAMA ${stageNum} / 5` : `STAGE ${stageNum} OF 5`;
-            document.getElementById("qDimIcon").innerText = dimMeta.icon;
-            document.getElementById("qDimName").innerText = isTr ? dimMeta.name_tr : dimMeta.name;
-
-            document.getElementById("qCurrent").innerText = (currentIndex + 1).toString();
-            document.getElementById("qTotal").innerText = totalPlanned.toString();
-            document.getElementById("stageProgressText").innerText = isTr 
-                ? `Pillar ${stageNum}/5 • Senaryo ${currentIndex + 1}/${totalPlanned}` 
-                : `Pillar ${stageNum}/5 • Scenario ${currentIndex + 1} of ${totalPlanned}`;
-
-            // Progress bar width
-            const pct = ((currentIndex + 1) / totalPlanned) * 100;
-            document.getElementById("progressBar").style.width = `${pct}%`;
-
-            // Dynamic CAT Status banner based on previous answer!
-            let catText = "";
-            let stars = "";
-            for (let i = 1; i <= 5; i++) {
-                stars += (i <= q.difficulty) ? "★" : "☆";
-            }
-            document.getElementById("catDifficultyStars").innerText = stars;
-
-            const prevQ = currentIndex > 0 ? activeQuestions[currentIndex - 1] : null;
-            if (!prevQ) {
-                catText = isTr 
-                    ? `Başlangıç Kalibrasyonu (Zorluk: Tier ${q.difficulty} - Mid)` 
-                    : `Initial Baseline Calibration (Difficulty: Tier ${q.difficulty} - Mid)`;
-            } else {
-                const last = { score: userAnswers[prevQ.id] };
-                if (last.score >= 4.0) {
-                    catText = isTr
-                        ? `📈 CAT Motoru: Önceki cevabınız Staff/Principal seviye olduğu için zorluk Tier ${q.difficulty} seviyesine YÜKSELTİLDİ.`
-                        : `📈 CAT Engine: Difficulty INCREASED to Tier ${q.difficulty} based on previous Staff-level response.`;
-                } else if (last.score <= 2.0) {
-                    catText = isTr
-                        ? `📉 CAT Motoru: Önceki cevabınız temel seviyeyi işaret ettiği için zorluk Tier ${q.difficulty} olarak ayarlandı.`
-                        : `📉 CAT Engine: Difficulty ADJUSTED to Tier ${q.difficulty} based on previous foundational response.`;
-                } else {
-                    catText = isTr
-                        ? `⚖️ CAT Motoru: Kıdemli (Senior) seviye korundu (Zorluk: Tier ${q.difficulty}).`
-                        : `⚖️ CAT Engine: Maintained Senior proficiency calibration (Difficulty: Tier ${q.difficulty}).`;
-                }
-            }
-            document.getElementById("catStatusText").innerText = catText;
-
-            // Interview source & type tag
-            document.getElementById("qSourceTag").innerText = q.interview_source || (isTr ? "DevCaliber Senaryosu" : "DevCaliber Scenario");
-            let typeLabel = "Scenario";
-            if (q.question_type === "system_design") typeLabel = isTr ? "Sistem Tasarımı (System Design)" : "System Design Challenge";
-            else if (q.question_type === "architecture_tradeoff") typeLabel = isTr ? "Mimari Ödünleşim (Trade-off)" : "Architecture Trade-off";
-            else typeLabel = isTr ? "Üretim Senaryosu" : "Production Scenario";
-            document.getElementById("qTypeTag").innerText = typeLabel;
-
-            // Scenario Title & text
-            document.getElementById("qTitle").innerText = (isTr && q.title_tr) ? q.title_tr : q.title;
-            document.getElementById("qScenario").innerText = (isTr && q.scenario_tr) ? q.scenario_tr : q.scenario;
-
-            // Render Options
-            const container = document.getElementById("optionsContainer");
-            container.innerHTML = "";
-
-            const letters = ["A", "B", "C", "D", "E"];
-            getOptions(q).forEach((opt, idx) => {
-                const isSelected = userAnswers[q.id] === opt.score;
-                const optText = (isTr && opt.text_tr) ? opt.text_tr : opt.text;
-
-                const btn = document.createElement("div");
-                btn.className = `p-4 rounded-xl border cursor-pointer transition-all flex items-start gap-3.5 ${
-                    isSelected 
-                        ? "border-sky-500 bg-sky-950/40 text-white shadow-md shadow-sky-500/10" 
-                        : "border-slate-800 bg-slate-950/60 hover:border-slate-700 hover:bg-slate-950 text-slate-300"
-                }`;
-                btn.onclick = () => selectOption(q, opt.score);
-
-                btn.innerHTML = `
-                    <div class="w-6 h-6 rounded-full flex items-center justify-center font-mono text-xs font-bold shrink-0 mt-0.5 ${
-                        isSelected ? "bg-sky-500 text-slate-950" : "bg-slate-800 text-slate-400"
-                    }">
-                        ${letters[idx]}
-                    </div>
-                    <div class="text-xs md:text-sm leading-relaxed">${optText}</div>
-                `;
-                container.appendChild(btn);
-            });
-
-            // Prev button visibility
-            const btnPrev = document.getElementById("btnPrev");
-            if (currentIndex > 0) {
-                btnPrev.classList.remove("hidden");
-                document.getElementById("btnPrevText").innerText = isTr ? "Önceki Senaryo" : "Previous Scenario";
-            } else {
-                btnPrev.classList.add("hidden");
-            }
-        }
-
-        // Select Option & Trigger CAT Adaptive Step
-        function selectOption(question, score) {
-            userAnswers[question.id] = score;
-
-            // Record in history for immediate CAT adaptation
-            const existingIdx = userHistory.findIndex(h => h.id === question.id);
-            if (existingIdx >= 0) {
-                userHistory[existingIdx].score = score;
-            } else {
-                userHistory.push({
-                    id: question.id,
-                    difficulty: question.difficulty,
-                    score: score,
-                });
-            }
-
-            // Auto advance after slight delay for visual satisfaction
-            setTimeout(() => {
-                if (currentIndex < activeQuestions.length - 1) {
-                    currentIndex++;
-                    renderQuestion();
-                    return;
-                }
-                const next = pickNextQuestion();
-                if (next) {
-                    activeQuestions.push(next);
-                    currentIndex++;
-                    renderQuestion();
-                } else {
-                    finishAssessment();
-                }
-            }, 220);
-        }
-
-        function previousQuestion() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion();
-            }
-        }
-
-        // Keyboard navigation (1-5 keys)
-        document.addEventListener("keydown", (e) => {
-            if (document.getElementById("questionScreen").classList.contains("hidden")) return;
-            const q = activeQuestions[currentIndex];
-            if (!q) return;
-
-            const keyMap = { "1": 0, "2": 1, "3": 2, "4": 3, "5": 4 };
-            if (e.key in keyMap) {
-                const optIndex = keyMap[e.key];
-                const opts = getOptions(q);
-                if (opts[optIndex]) {
-                    selectOption(q, opts[optIndex].score);
-                }
-            }
-        });
-
-        // Calculate Results & Render Diagnostic
-        function finishAssessment() {
-            clearInterval(timerInterval);
-            document.getElementById("questionScreen").classList.add("hidden");
-            document.getElementById("examTimerBadge").classList.add("hidden");
-            document.getElementById("resultsScreen").classList.remove("hidden");
-
-            const isTr = currentLang === "tr";
-
-            // Track weights
-            const weights = {
-                general: { craft: 0.25, ownership: 0.20, impact: 0.20, leadership: 0.15, autonomy: 0.20 },
-                backend: { craft: 0.30, ownership: 0.25, impact: 0.15, leadership: 0.10, autonomy: 0.20 },
-                frontend: { craft: 0.30, impact: 0.25, autonomy: 0.20, ownership: 0.15, leadership: 0.10 },
-                devops: { ownership: 0.35, craft: 0.25, autonomy: 0.20, impact: 0.10, leadership: 0.10 },
-                tech_lead: { leadership: 0.30, impact: 0.25, autonomy: 0.20, craft: 0.15, ownership: 0.10 }
-            }[candidateTrackVal] || { craft: 0.25, ownership: 0.20, impact: 0.20, leadership: 0.15, autonomy: 0.20 };
-
-            // Calculate pillar scores
-            const dimScores = { craft: [], ownership: [], impact: [], leadership: [], autonomy: [] };
-            activeQuestions.forEach(q => {
-                if (!(q.id in userAnswers)) return;  // unanswered (e.g. timer ran out)
-                dimScores[q.dim].push(userAnswers[q.id]);
-            });
-
-            const averages = {};
-            let compositeScore = 0;
-            for (const [dim, scores] of Object.entries(dimScores)) {
-                const avg = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length) : 2.0;
-                averages[dim] = avg;
-                compositeScore += avg * weights[dim];
-            }
-
-            // Determine Level Tier
-            let levelCode = "L3";
-            let levelTitle = "Senior Software Engineer";
-            let levelDesc = isTr 
-                ? "Yüksek karmaşıklıktaki sistem tasarımlarını ve teknik yol haritasını bağımsız olarak yürütür. Kod standartlarını ve mimariyi belirler."
-                : "Autonomous in executing high-complexity initiatives. Sets architectural direction and elevates team code standards.";
-            let equivG = "L5", equivM = "E5", equivA = "SDE III";
-
-            if (compositeScore < 1.8) {
-                levelCode = "L1";
-                levelTitle = isTr ? "Associate / Junior Engineer" : "Associate / Junior Software Engineer";
-                levelDesc = isTr 
-                    ? "Net sınırları çizilmiş görevlerde ve yönlendirme ile güvenli kod üretir. Ekip kod standartlarını öğrenir."
-                    : "Writes functional code for well-scoped tasks with guidance. Follows team standards.";
-                equivG = "L3"; equivM = "E3"; equivA = "SDE I";
-            } else if (compositeScore < 2.8) {
-                levelCode = "L2";
-                levelTitle = isTr ? "Software Engineer (Mid-Level)" : "Software Engineer (Mid)";
-                levelDesc = isTr 
-                    ? "Özellikleri uçtan uca bağımsız geliştirir, test eder ve production'a alır. Küçük ve orta sistemleri tasarlar."
-                    : "Independently builds, tests, and deploys features from 0 to production.";
-                equivG = "L4"; equivM = "E4"; equivA = "SDE II";
-            } else if (compositeScore < 3.8) {
-                levelCode = "L3";
-                levelTitle = isTr ? "Senior Software Engineer" : "Senior Software Engineer";
-                levelDesc = isTr 
-                    ? "Yüksek karmaşıklıktaki sistem tasarımlarını ve teknik yol haritasını bağımsız olarak yürütür."
-                    : "Autonomous in executing high-complexity initiatives. Leads technical design and mitigates system risk.";
-                equivG = "L5"; equivM = "E5"; equivA = "SDE III";
-            } else if (compositeScore < 4.6) {
-                levelCode = "L4";
-                levelTitle = isTr ? "Staff Software Engineer" : "Staff Software Engineer";
-                levelDesc = isTr 
-                    ? "Birden fazla takım genelinde çarpan etkisi yaratır. Şirket çapında mimari standartları ve güvenilirliği kurar."
-                    : "Multi-team force-multiplier. Solves systemic architectural bottlenecks and defines platform standards.";
-                equivG = "L6"; equivM = "E6"; equivA = "Principal SDE";
-            } else {
-                levelCode = "L5";
-                levelTitle = isTr ? "Principal / Distinguished Engineer" : "Principal / Distinguished Engineer";
-                levelDesc = isTr 
-                    ? "Şirketin 5 yıllık teknoloji vizyonunu belirler. Sektör standardı mimari temelleri inşa eder."
-                    : "Defines company-wide multi-year technology strategy and creates defensible competitive moats.";
-                equivG = "L7+"; equivM = "E7+"; equivA = "Senior Principal";
-            }
-
-            // Percentile
-            let percentile = 70;
-            if (compositeScore <= 1.0) percentile = 5;
-            else if (compositeScore <= 2.0) percentile = Math.round(5 + (compositeScore - 1.0) * 30);
-            else if (compositeScore <= 3.0) percentile = Math.round(35 + (compositeScore - 2.0) * 35);
-            else if (compositeScore <= 4.0) percentile = Math.round(70 + (compositeScore - 3.0) * 18);
-            else if (compositeScore <= 4.8) percentile = Math.round(88 + (compositeScore - 4.0) * 10);
-            else percentile = 99;
-
-            // Render Header & Top Card
-            document.getElementById("candidateResultTitle").innerText = `${candidateNameVal} — ${levelCode} ${levelTitle}`;
-            document.getElementById("overallLevelCode").innerText = `${levelCode} — ${levelTitle}`;
-            document.getElementById("overallLevelDesc").innerText = levelDesc;
-            document.getElementById("overallScoreNum").innerText = compositeScore.toFixed(2);
-            document.getElementById("overallPercentileNum").innerText = isTr ? `~%${100 - percentile}'lik Dilim` : `~Top ${100 - percentile}%`;
-            const answeredCount = Object.keys(userAnswers).length;
-            document.getElementById("assessmentMeta").innerText =
-                `Track: ${candidateTrackVal} • Mode: ${currentMode} (~${MODES[currentMode].minutes} min) • ${answeredCount} ${isTr ? "soru" : "questions"}`;
-
-            document.getElementById("equivGoogle").innerText = equivG;
-            document.getElementById("equivMeta").innerText = equivM;
-            document.getElementById("equivAmazon").innerText = equivA;
-
-            // Render Dimension Bars
-            const dimContainer = document.getElementById("dimensionBreakdownContainer");
-            dimContainer.innerHTML = "";
-            for (const [dimKey, avg] of Object.entries(averages)) {
-                const meta = DIMENSION_METADATA[dimKey];
-                const pct = (avg / 5.0) * 100;
-                const dName = isTr ? meta.name_tr : meta.name;
-
-                const row = document.createElement("div");
-                row.className = "space-y-1";
-                row.innerHTML = `
-                    <div class="flex justify-between text-xs">
-                        <span class="font-semibold text-slate-200">${meta.icon} ${dName}</span>
-                        <span class="font-mono text-sky-400 font-bold">${avg.toFixed(2)} / 5.0</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-                        <div class="bg-sky-500 h-2 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
-                    </div>
-                `;
-                dimContainer.appendChild(row);
-            }
-
-            // Render Radar Chart
-            renderRadarChart(averages);
-
-            // Render Targeted Promotion Roadmap
-            renderRoadmap(compositeScore, levelCode);
-
-            lastResult = { name: candidateNameVal, levelCode, levelTitle, score: compositeScore, averages, track: candidateTrackVal };
-            renderReliability(dimScores, isTr);
-            handleHistory(averages, compositeScore, levelCode, isTr);
-        }
-
-        // Confidence + calibration notes (mirrors devcaliber/evaluator.py)
-        function renderReliability(dimScores, isTr) {
-            const counts = Object.values(dimScores).map(v => v.length);
-            const minN = Math.min(...counts);
-            const confidence = minN <= 1 ? "low" : minN <= 4 ? "medium" : "high";
-            const confLabel = { low: isTr ? "Düşük" : "Low", medium: isTr ? "Orta" : "Medium", high: isTr ? "Yüksek" : "High" }[confidence];
-            const notes = [];
-            const all = Object.values(dimScores).flat();
-            if (all.length >= 10 && all.every(x => x >= 4.5)) {
-                notes.push(isTr
-                    ? "Tüm cevaplar en üst seviyeydi. Öz değerlendirme genelde yüksek çıkar; bir meslektaş veya yönetici geri bildirimiyle doğrulayın."
-                    : "Every answer was top-tier. Self-assessment tends to run high; validate with peer or manager feedback.");
-            }
-            for (const [dim, scores] of Object.entries(dimScores)) {
-                if (scores.length >= 3 && Math.max(...scores) - Math.min(...scores) >= 3.0) {
-                    const n = isTr ? DIMENSION_METADATA[dim].name_tr : DIMENSION_METADATA[dim].name;
-                    notes.push(isTr
-                        ? `${n}: cevaplar tutarsızdı; bu boyutun skoru daha az güvenilir.`
-                        : `${n}: answers were inconsistent; this dimension's score is less reliable.`);
-                }
-            }
-            const box = document.getElementById("reliabilityBox");
-            box.innerHTML = "";
-            const head = document.createElement("div");
-            head.innerHTML = `<strong class="text-white">${isTr ? "Sonuç güvenilirliği" : "Result confidence"}:</strong> ${confLabel} <span class="text-slate-500">(${minN} ${isTr ? "soru / boyut" : "questions per pillar"})</span>`;
-            box.appendChild(head);
-            notes.forEach(n => { const d = document.createElement("div"); d.textContent = "⚠️ " + n; box.appendChild(d); });
-            const foot = document.createElement("div");
-            foot.className = "text-slate-500";
-            foot.textContent = isTr
-                ? "* Yüzdelik dilim, gerçek test verisinden ölçülmemiş, elle ayarlanmış bir eğriye dayanan kaba bir tahmindir."
-                : "* Percentile is a rough estimate from a hand-tuned curve, not measured from real test-takers.";
-            box.appendChild(foot);
-        }
-
-        // Local-only history (browser localStorage): shows progress between attempts
-        function handleHistory(averages, score, levelCode, isTr) {
-            const box = document.getElementById("progressBox");
-            box.classList.add("hidden");
-            try {
-                const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-                const prev = [...history].reverse().find(h => h.name === candidateNameVal && h.track === candidateTrackVal);
-                if (prev) {
-                    box.innerHTML = "";
-                    const d = (n) => (n >= 0 ? "+" : "") + n.toFixed(2);
-                    const title = document.createElement("div");
-                    title.innerHTML = `<strong class="text-white">${isTr ? "Önceki denemeye göre" : "Since your last attempt"}</strong> <span class="text-slate-500">(${new Date(prev.ts).toLocaleDateString()})</span>: ${prev.score.toFixed(2)} → ${score.toFixed(2)} (${d(score - prev.score)})`;
-                    box.appendChild(title);
-                    for (const dim of DIM_ORDER) {
-                        if (prev.dims && prev.dims[dim] !== undefined) {
-                            const delta = averages[dim] - prev.dims[dim];
-                            const row = document.createElement("div");
-                            row.className = delta > 0 ? "text-emerald-400" : delta < 0 ? "text-rose-400" : "text-slate-400";
-                            row.textContent = `${d(delta)}  ${isTr ? DIMENSION_METADATA[dim].name_tr : DIMENSION_METADATA[dim].name}`;
-                            box.appendChild(row);
-                        }
-                    }
-                    box.classList.remove("hidden");
-                }
-                history.push({ name: candidateNameVal, track: candidateTrackVal, mode: currentMode, ts: Date.now(), score, level: levelCode, dims: averages });
-                localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-50)));
-            } catch (e) { /* storage unavailable: skip history */ }
-        }
-
-        // Share card (PNG) drawn on a canvas, includes the radar chart
-        function downloadShareCard() {
-            if (!lastResult) return;
-            const W = 1200, H = 630;
-            const c = document.createElement("canvas");
-            c.width = W; c.height = H;
-            const g = c.getContext("2d");
-            const grad = g.createLinearGradient(0, 0, W, H);
-            grad.addColorStop(0, "#0f172a"); grad.addColorStop(1, "#082f49");
-            g.fillStyle = grad; g.fillRect(0, 0, W, H);
-            g.fillStyle = "#38bdf8"; g.font = "bold 28px sans-serif";
-            g.fillText("DevCaliber", 60, 80);
-            g.fillStyle = "#94a3b8"; g.font = "24px sans-serif";
-            g.fillText(lastResult.name, 60, 150);
-            g.fillStyle = "#ffffff"; g.font = "bold 84px sans-serif";
-            g.fillText(lastResult.levelCode, 60, 280);
-            g.font = "bold 36px sans-serif";
-            g.fillText(lastResult.levelTitle, 60, 340);
-            g.fillStyle = "#38bdf8"; g.font = "bold 64px sans-serif";
-            g.fillText(lastResult.score.toFixed(2) + " / 5.0", 60, 450);
-            g.fillStyle = "#64748b"; g.font = "20px sans-serif";
-            g.fillText(`${currentMode} assessment • alisenn.github.io/devcaliber`, 60, 560);
-            const finish = () => {
-                const a = document.createElement("a");
-                a.download = "devcaliber-result.png";
-                a.href = c.toDataURL("image/png");
-                a.click();
-            };
-            if (chartInstance) {
-                const img = new Image();
-                img.onload = () => { g.drawImage(img, 640, 90, 480, 480); finish(); };
-                img.src = chartInstance.toBase64Image();
-            } else { finish(); }
-        }
-
-        // Radar Chart via Chart.js
-        let chartInstance = null;
-        function renderRadarChart(averages) {
-            const ctx = document.getElementById('competencyChart').getContext('2d');
-            if (chartInstance) chartInstance.destroy();
-
-            const isTr = currentLang === "tr";
-            const labels = isTr 
-                ? ['Mimari & Kod', 'Güvenilirlik', 'İş Etkisi', 'Liderlik', 'Otonomi']
-                : ['Craft & Architecture', 'Reliability', 'Impact', 'Leadership', 'Autonomy'];
-
-            chartInstance = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: isTr ? 'Mevcut Skor' : 'Current Score',
-                        data: [
-                            averages.craft,
-                            averages.ownership,
-                            averages.impact,
-                            averages.leadership,
-                            averages.autonomy
-                        ],
-                        backgroundColor: 'rgba(56, 189, 248, 0.2)',
-                        borderColor: '#38bdf8',
-                        pointBackgroundColor: '#818cf8',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#818cf8'
-                    }]
-                },
-                options: {
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            pointLabels: {
-                                color: '#94a3b8',
-                                font: { size: 10, family: 'Inter' }
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 5,
-                            ticks: { display: false, stepSize: 1 }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        // Roadmap
-        function renderRoadmap(score, levelCode) {
-            const isTr = currentLang === "tr";
-            const container = document.getElementById("roadmapContainer");
-            container.innerHTML = "";
-
-            const targetCode = levelCode === "L1" ? "L2" : levelCode === "L2" ? "L3" : levelCode === "L3" ? "L4" : "L5";
-
-            const recommendations = [
-                {
-                    title: isTr ? "Sistem Tasarımı & Distributed Systems Ustalığı" : "System Design & Distributed Systems Mastery",
-                    action: isTr ? "İki kritik özellik için kod yazmadan önce alternatif mimarileri ve trade-off'ları belgeleyen teknik tasarım dokümanları (RFC) hazırlayın." : "Author 2 comprehensive technical RFCs evaluating distributed caching, idempotency, and partition strategies before writing code.",
-                    book: "Designing Data-Intensive Applications by Martin Kleppmann"
-                },
-                {
-                    title: isTr ? "Production Güvenilirliği & SLO Yönetimi" : "Production Reliability & SLO Ownership",
-                    action: isTr ? "En kritik 2 kullanıcı akışı için SLO ve Error Budget tanımlayın; incident postmortem toplantılarına liderlik edin." : "Define Error Budgets and golden signal SLOs for critical user paths; act as primary incident commander during outages.",
-                    book: "Site Reliability Engineering (Google SRE Book)"
-                },
-                {
-                    title: isTr ? "Takım İçi Çarpan Etkisi (Force Multiplication)" : "Cross-Team Force Multiplication",
-                    action: isTr ? "Bir junior/mid mühendisin kıdem atlamasına mentörlük yapın; takımlar arası teknik standartlaşma guild'ine katılın." : "Formally mentor 1 engineer toward promotion; spearhead an internal engineering guild establishing golden path SDKs.",
-                    book: "Staff Engineer: Culture and Leadership by Will Larson"
-                }
-            ];
-
-            recommendations.forEach(rec => {
-                const card = document.createElement("div");
-                card.className = "p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs";
-                card.innerHTML = `
-                    <div class="flex items-center justify-between mb-1.5">
-                        <h4 class="font-bold text-white text-sm">${rec.title}</h4>
-                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">Target: ${targetCode}</span>
-                    </div>
-                    <p class="text-slate-300 leading-relaxed mb-2">${rec.action}</p>
-                    <div class="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
-                        <span>📖 Recommended Reading:</span>
-                        <strong class="text-indigo-300">${rec.book}</strong>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Copy Badge
-        function copyBadgeMarkdown() {
-            const shortTitle = { L1: "Junior", L2: "Mid", L3: "Senior", L4: "Staff", L5: "Principal" };
-            const code = lastResult ? lastResult.levelCode : "L3";
-            const badgeMd = `[![DevCaliber Seniority](https://img.shields.io/badge/DevCaliber%20Seniority-${code}%20${shortTitle[code]}-0ea5e9?style=for-the-badge)](https://alisenn.github.io/devcaliber/)`;
-            navigator.clipboard.writeText(badgeMd).then(() => {
-                const btn = document.getElementById("btnCopyBadge");
-                const old = btn.innerText;
-                btn.innerText = "✅ Copied to Clipboard!";
-                setTimeout(() => { btn.innerText = old; }, 2000);
-            });
-        }
-    </script>
-</body>
-</html>
+]

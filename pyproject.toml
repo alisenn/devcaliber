@@ -61,12 +61,15 @@ Homepage = "https://alisenn.github.io/devcaliber/"
 Repository = "https://github.com/alisenn/devcaliber"
 Issues = "https://github.com/alisenn/devcaliber/issues"
 
-[tool.setuptools.packages.find]
-include = ["devcaliber*"]
-
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra -q --cov=devcaliber"
 testpaths = [
     "tests"
 ]
+
+[tool.setuptools.packages.find]
+include = ["devcaliber*"]
+
+[tool.setuptools.package-data]
+devcaliber = ["data/*.json"]
