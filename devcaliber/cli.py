@@ -1,5 +1,5 @@
 """
-DevCaliber CLI: Computerized Adaptive Testing (CAT) for Software Engineering Seniority.
+DevCaliber CLI: scenario-based software engineering seniority assessment.
 Features real-time step-by-step difficulty adaptation, FAANG/Glassdoor real interview questions,
 and English / Turkish dual language support.
 """
@@ -92,12 +92,12 @@ def assess(
         mode_label = f"{mode_cfg.label_tr} (~{mode_cfg.minutes} dk, {len(pool)} soru)"
         console.print(f"[bold][cyan]{name}[/] için Kıdem Değerlendirmesi Başlatılıyor (Track: [green]{track.value.upper()}[/])[/]")
         console.print(f"[dim]Mod: {mode_label}. Her senaryoyu prodüksiyondaki doğal refleksi yansıtacak şekilde yanıtlayın.[/dim]")
-        console.print("[italic dim]⚡ Sınav bir önceki soruya verdiğiniz cevabın yetkinliğine göre zorlaşır veya kolaylaşır.[/italic dim]\n")
+        console.print("[italic dim]Sonraki sorular önceki cevaplarınıza göre seçilir.[/italic dim]\n")
     else:
         mode_label = f"{mode_cfg.label} (~{mode_cfg.minutes} min, {len(pool)} questions)"
         console.print(f"[bold]Starting Seniority Assessment for [cyan]{name}[/] (Track: [green]{track.value.upper()}[/])[/]")
         console.print(f"[dim]Mode: {mode_label}. Answer each scenario reflecting your natural behavior in production.[/dim]")
-        console.print("[italic dim]⚡ Questions adaptively scale up or down based on your previous answer's competency.[/italic dim]\n")
+        console.print("[italic dim]Later questions are chosen based on your earlier answers.[/italic dim]\n")
 
     engine = AdaptiveAssessmentEngine(track=track, questions=pool)
     dimensions = list(DimensionId)
@@ -118,9 +118,6 @@ def assess(
 
             q, adaptation_msg = adaptive_result
             q_index += 1
-
-            if q_index > 1:
-                console.print(f"[dim cyan]{adaptation_msg}[/]")
 
             # Scenario details
             q_title = (q.title_tr if is_tr and q.title_tr else q.title)
@@ -241,7 +238,7 @@ def sprint(
     export_html: Optional[str] = typer.Option(None, "--html", help="Path to save HTML report"),
     open_browser: bool = typer.Option(False, "--open", help="Open HTML report in browser"),
 ):
-    """30-minute sprint assessment (15 adaptive scenarios, medium confidence)."""
+    """30-minute sprint assessment (15 scenarios, medium confidence)."""
     _mode_command("sprint", name, track, lang, export_html, open_browser)
 
 

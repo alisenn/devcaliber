@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevCaliber — Open Source Engineering Seniority & Career Matrix Benchmark</title>
-    <meta name="description" content="Computerized Adaptive Testing (CAT) benchmark for software engineering seniority. Real FAANG & Glassdoor interview scenarios across Craft, Reliability, Impact, Leadership, and Autonomy.">
+    <meta name="description" content="Scenario-based benchmark for software engineering seniority. Interview-style scenarios across Craft, Reliability, Impact, Leadership, and Autonomy.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,13 +59,13 @@
         <!-- INTRO SCREEN -->
         <div id="introScreen" class="text-center">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-300 border border-sky-500/20 mb-6">
-                <span id="introBadge">🎯 Computerized Adaptive Testing (CAT) Seniority Diagnostic Engine</span>
+                <span id="introBadge">🎯 Engineering Seniority Self-Assessment</span>
             </div>
             <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white leading-tight">
                 <span id="heroTitle1">Benchmark Your True</span> <br><span class="gradient-text" id="heroTitle2">Engineering Seniority</span>
             </h1>
             <p class="mt-4 text-base md:text-lg text-slate-400 max-w-2xl mx-auto" id="heroSubtitle">
-                Real FAANG & Glassdoor system design and architecture scenarios. Difficulty adapts after each question based on your immediate previous response.
+                Production-style scenarios across five pillars. Later questions are picked based on your earlier answers.
             </p>
 
             <!-- Assessment Config Form -->
@@ -93,7 +93,7 @@
                                     <input type="radio" name="evalMode" value="sprint" checked class="text-sky-500 focus:ring-0">
                                     <span class="text-xs font-bold text-white" id="modeSprintTitle">⚡ 30-Min Sprint</span>
                                 </div>
-                                <span class="text-[11px] text-slate-400 pl-5" id="modeSprintDesc">15 adaptive scenarios · medium confidence</span>
+                                <span class="text-[11px] text-slate-400 pl-5" id="modeSprintDesc">15 scenarios · medium confidence</span>
                                 <span class="absolute top-2 right-2 text-[9px] font-bold bg-sky-500 text-slate-950 px-1.5 py-0.5 rounded" id="modeSprintTag">RECOMMENDED</span>
                             </label>
                             <label class="border border-slate-800 bg-slate-950/60 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-950/30 rounded-xl p-3.5 cursor-pointer flex flex-col items-start gap-1">
@@ -101,7 +101,7 @@
                                     <input type="radio" name="evalMode" value="deep" class="text-sky-500 focus:ring-0">
                                     <span class="text-xs font-bold text-white" id="modeDeepTitle">🎓 2-Hour Deep Dive</span>
                                 </div>
-                                <span class="text-[11px] text-slate-400 pl-5" id="modeDeepDesc">60 adaptive scenarios · high confidence</span>
+                                <span class="text-[11px] text-slate-400 pl-5" id="modeDeepDesc">60 scenarios · high confidence</span>
                             </label>
                             <label class="border border-slate-800 bg-slate-950/60 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-950/30 rounded-xl p-3.5 cursor-pointer flex flex-col items-start gap-1">
                                 <div class="flex items-center gap-2">
@@ -115,7 +115,7 @@
                 </div>
 
                 <button onclick="startAssessment()" class="mt-6 w-full bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-500 hover:from-sky-400 hover:to-purple-400 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-sky-500/25 flex items-center justify-center gap-2">
-                    <span id="btnStartText">Begin Adaptive Seniority Examination</span>
+                    <span id="btnStartText">Begin Assessment</span>
                     <span>→</span>
                 </button>
                 <p class="text-center text-xs text-slate-500 mt-3" id="introFooter">Free & Open Source • Zero Tracking • 100% Client-Side Computation</p>
@@ -183,10 +183,10 @@
             <div id="catStatusBanner" class="mb-4 flex items-center justify-between p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
                 <div class="flex items-center gap-2">
                     <span class="text-sm">🎯</span>
-                    <span id="catStatusText" class="font-medium text-slate-300">Initial Baseline Calibration (Difficulty: Tier 2)</span>
+                    <span id="catStatusText" class="font-medium text-slate-300">Questions are chosen based on your earlier answers.</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-[10px] uppercase font-bold text-slate-500" id="catDiffLabel">Difficulty</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-500" id="catDiffLabel">Complexity</span>
                     <div id="catDifficultyStars" class="flex gap-1 text-amber-400 text-xs">★★☆☆☆</div>
                 </div>
             </div>
@@ -3381,28 +3381,28 @@
 
             // Intro elements
             document.getElementById("introBadge").innerText = isTr 
-                ? "🎯 Bilgisayarlı Uyarlanabilir Test (CAT) Kıdem Teşhis Motoru" 
-                : "🎯 Computerized Adaptive Testing (CAT) Seniority Diagnostic Engine";
+                ? "🎯 Mühendislik Kıdem Öz Değerlendirmesi" 
+                : "🎯 Engineering Seniority Self-Assessment";
             document.getElementById("heroTitle1").innerText = isTr ? "Gerçek Mühendislik" : "Benchmark Your True";
             document.getElementById("heroTitle2").innerText = isTr ? "Kıdemini Doğrula" : "Engineering Seniority";
             document.getElementById("heroSubtitle").innerText = isTr
-                ? "Gerçek FAANG ve Glassdoor system design ve mimari senaryoları. Soru zorluğu, bir önceki sorunuza verdiğiniz cevaba göre dinamik olarak anlık ayarlanır."
-                : "Real FAANG & Glassdoor system design and architecture scenarios. Difficulty adapts after each question based on your immediate previous response.";
+                ? "Beş boyutta production odaklı senaryolar. Sonraki sorular önceki cevaplarınıza göre seçilir."
+                : "Production-style scenarios across five pillars. Later questions are picked based on your earlier answers.";
             
             document.getElementById("labelCandidate").innerText = isTr ? "Aday İsmi veya GitHub Kullanıcı Adı" : "Candidate Name or GitHub Handle";
             document.getElementById("labelTrack").innerText = isTr ? "Mühendislik Uzmanlık Alanı (Track)" : "Engineering Track";
             document.getElementById("labelMode").innerText = isTr ? "Değerlendirme Modu" : "Examination Mode";
             
             document.getElementById("modeSprintTitle").innerText = isTr ? "⚡ 30 Dakika Sprint" : "⚡ 30-Min Sprint";
-            document.getElementById("modeSprintDesc").innerText = isTr ? "15 uyarlanabilir senaryo · orta güvenilirlik" : "15 adaptive scenarios · medium confidence";
+            document.getElementById("modeSprintDesc").innerText = isTr ? "15 senaryo · orta güvenilirlik" : "15 scenarios · medium confidence";
             document.getElementById("modeSprintTag").innerText = isTr ? "ÖNERİLEN" : "RECOMMENDED";
             document.getElementById("modeDeepTitle").innerText = isTr ? "🎓 2 Saatlik Derin Analiz" : "🎓 2-Hour Deep Dive";
-            document.getElementById("modeDeepDesc").innerText = isTr ? "60 uyarlanabilir senaryo · yüksek güvenilirlik" : "60 adaptive scenarios · high confidence";
+            document.getElementById("modeDeepDesc").innerText = isTr ? "60 senaryo · yüksek güvenilirlik" : "60 scenarios · high confidence";
             document.getElementById("modePulseTitle").innerText = isTr ? "🔎 5 Dakika Nabız" : "🔎 5-Min Pulse";
             document.getElementById("modePulseDesc").innerText = isTr ? "5 senaryo · düşük güvenilirlik" : "5 scenarios · low confidence";
             document.getElementById("percentileLabel").innerText = isTr ? "Tahmini Yüzdelik*" : "Estimated Percentile*";
 
-            document.getElementById("btnStartText").innerText = isTr ? "Uyarlanabilir Kıdem Sınavını Başlat" : "Begin Adaptive Seniority Examination";
+            document.getElementById("btnStartText").innerText = isTr ? "Değerlendirmeyi Başlat" : "Begin Assessment";
             document.getElementById("introFooter").innerText = isTr ? "Ücretsiz & Açık Kaynak • Takip Yok • %100 İstemci Taraflı Hesaplama" : "Free & Open Source • Zero Tracking • 100% Client-Side Computation";
 
             document.getElementById("levelingGuideTitle").innerText = isTr ? "Global Teknoloji Şirketleri Seviye (Leveling) Eşleşmesi" : "Global Industry Leveling Standard Mapping";
@@ -3526,27 +3526,10 @@
             }
             document.getElementById("catDifficultyStars").innerText = stars;
 
-            const prevQ = currentIndex > 0 ? activeQuestions[currentIndex - 1] : null;
-            if (!prevQ) {
-                catText = isTr 
-                    ? `Başlangıç Kalibrasyonu (Zorluk: Tier ${q.difficulty} - Mid)` 
-                    : `Initial Baseline Calibration (Difficulty: Tier ${q.difficulty} - Mid)`;
-            } else {
-                const last = { score: userAnswers[prevQ.id] };
-                if (last.score >= 4.0) {
-                    catText = isTr
-                        ? `📈 CAT Motoru: Önceki cevabınız Staff/Principal seviye olduğu için zorluk Tier ${q.difficulty} seviyesine YÜKSELTİLDİ.`
-                        : `📈 CAT Engine: Difficulty INCREASED to Tier ${q.difficulty} based on previous Staff-level response.`;
-                } else if (last.score <= 2.0) {
-                    catText = isTr
-                        ? `📉 CAT Motoru: Önceki cevabınız temel seviyeyi işaret ettiği için zorluk Tier ${q.difficulty} olarak ayarlandı.`
-                        : `📉 CAT Engine: Difficulty ADJUSTED to Tier ${q.difficulty} based on previous foundational response.`;
-                } else {
-                    catText = isTr
-                        ? `⚖️ CAT Motoru: Kıdemli (Senior) seviye korundu (Zorluk: Tier ${q.difficulty}).`
-                        : `⚖️ CAT Engine: Maintained Senior proficiency calibration (Difficulty: Tier ${q.difficulty}).`;
-                }
-            }
+            // Neutral message: don't reveal how the previous answer was scored.
+            catText = isTr
+                ? "Sonraki sorular önceki cevaplarınıza göre seçilir."
+                : "Questions are chosen based on your earlier answers.";
             document.getElementById("catStatusText").innerText = catText;
 
             // Interview source & type tag

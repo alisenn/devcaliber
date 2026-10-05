@@ -11,7 +11,7 @@
 
 ### The Open Source Engineering Seniority & Career Matrix Diagnostic Engine
 
-*Demystify your career ladder. Take a 30-minute sprint or a 2-hour deep dive of adaptive, scenario-based questions, generate interactive radar diagnostics, and chart your promotion roadmap.*
+*Demystify your career ladder. Take a 30-minute sprint or a 2-hour deep dive of scenario-based questions, generate interactive radar diagnostics, and chart your promotion roadmap.*
 
 ---
 
@@ -48,7 +48,7 @@ Engineering job titles are notoriously fragmented across tech companies:
 
 ## ⚡ Key Features
 
-- 🧠 **Computerized Adaptive Testing (CAT) Engine**: Difficulty dynamically adapts step-by-step (+1 / -1) after each question based on your immediate previous response.
+- 🧠 **Question Selection**: Within each pillar, later scenarios are picked based on your earlier answers. This is a simple rule, not a calibrated psychometric model.
 - 🏢 **Interview-Style Scenarios**: Case studies including payment idempotency, cache stampede prevention, zero-downtime database migrations, and SLO burn rates.
 - 🌐 **Dual-Language Support (English 🇺🇸 & Turkish 🇹🇷)**: Fully bilingual interface with natural Turkish translation while preserving essential industry developer terminology (`Singleflight`, `Expand-Contract`, `Idempotency Key`, `Circuit Breaker`, `SLO`, `Error Budget`).
 - ⚡ **30-Minute Sprint (15 Scenarios)**: The recommended default. Three scenarios per pillar, medium result confidence.
